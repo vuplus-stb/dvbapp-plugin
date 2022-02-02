@@ -3,7 +3,6 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
 	aihdcontroler \
 	antiscrollbar \
-	audiosync \
 	automatictimerlistcleanup \
 	automaticvolumeadjustment \
 	autoresolution \
