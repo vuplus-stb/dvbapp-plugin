@@ -37,7 +37,6 @@ SUBDIRS = \
 	logomanager \
 	mediadownloader \
 	merlinepg \
-	merlinmusicplayer \
 	meteoitalia \
 	mosaic \
 	moviecut \
