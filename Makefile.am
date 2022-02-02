@@ -51,7 +51,6 @@ SUBDIRS = \
 	ofdb \
 	orfat \
 	orfteletext \
-	partnerbox \
 	passwordchanger \
 	permanentclock \
 	podcast \
