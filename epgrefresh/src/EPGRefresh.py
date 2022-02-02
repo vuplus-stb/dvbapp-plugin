@@ -9,7 +9,7 @@ from enigma import eServiceReference, eServiceCenter
 from ServiceReference import ServiceReference
 
 # Timer
-from EPGRefreshTimer import epgrefreshtimer, EPGRefreshTimerEntry, checkTimespan
+from .EPGRefreshTimer import epgrefreshtimer, EPGRefreshTimerEntry, checkTimespan
 
 # To calculate next timer execution
 from time import time
@@ -20,14 +20,14 @@ from Tools.XMLTools import stringToXML
 from os import path as path
 
 # We want a list of unique services
-from EPGRefreshService import EPGRefreshService
+from .EPGRefreshService import EPGRefreshService
 
 # Configuration
 from Components.config import config
 
 # ... II
-from MainPictureAdapter import MainPictureAdapter
-from BackgroundAdapter import BackgroundAdapter
+from .MainPictureAdapter import MainPictureAdapter
+from .BackgroundAdapter import BackgroundAdapter
 
 # Path to configuration
 CONFIG = "/etc/enigma2/epgrefresh.xml"
@@ -126,7 +126,7 @@ class EPGRefresh:
 		file.close()
 
 	def forceRefresh(self, session = None):
-		print "[EPGRefresh] Forcing start of EPGRefresh"
+		print("[EPGRefresh] Forcing start of EPGRefresh")
 		if self.session is None:
 			if session is not None:
 				self.session = session
@@ -144,17 +144,17 @@ class EPGRefresh:
 		epgrefreshtimer.setRefreshTimer(self.createWaitTimer)
 
 	def stop(self):
-		print "[EPGRefresh] Stopping Timer"
+		print("[EPGRefresh] Stopping Timer")
 		epgrefreshtimer.clear()
 
 	def prepareRefresh(self):
-		print "[EPGRefresh] About to start refreshing EPG"
+		print("[EPGRefresh] About to start refreshing EPG")
 
 		# Maybe read in configuration
 		try:
 			self.readConfiguration()
-		except Exception, e:
-			print "[EPGRefresh] Error occured while reading in configuration:", e
+		except Exception as e:
+			print(("[EPGRefresh] Error occured while reading in configuration:", e))
 
 		# This will hold services which are not explicitely in our list
 		additionalServices = []
@@ -175,8 +175,8 @@ class EPGRefresh:
 
 				# Read in configuration
 				autotimer.readXml()
-			except Exception, e:
-				print "[EPGRefresh] Could not inherit AutoTimer Services:", e
+			except Exception as e:
+				print(("[EPGRefresh] Could not inherit AutoTimer Services:", e))
 			else:
 				# Fetch services
 				for timer in autotimer.getEnabledTimerList():
@@ -251,8 +251,8 @@ class EPGRefresh:
 
 				# Parse EPG
 				autotimer.parseEPG()
-			except Exception, e:
-				print "[EPGRefresh] Could not start AutoTimer:", e
+			except Exception as e:
+				print(("[EPGRefresh] Could not start AutoTimer:", e))
 			finally:
 				# Remove instance if there wasn't one before
 				if removeInstance:
@@ -289,10 +289,10 @@ class EPGRefresh:
 					config.plugins.epgrefresh.begin.value,
 					config.plugins.epgrefresh.end.value):
 
-					print "[EPGRefresh] Gone out of timespan while refreshing, sorry!"
+					print("[EPGRefresh] Gone out of timespan while refreshing, sorry!")
 					self.cleanUp()
 				else:
-					print "[EPGRefresh] Box no longer in Standby or Recording started, rescheduling"
+					print("[EPGRefresh] Box no longer in Standby or Recording started, rescheduling")
 
 					# Recheck later
 					epgrefreshtimer.add(EPGRefreshTimerEntry(
@@ -309,14 +309,14 @@ class EPGRefresh:
 
 	def nextService(self):
 		# Debug
-		print "[EPGRefresh] Maybe zap to next service"
+		print("[EPGRefresh] Maybe zap to next service")
 
 		try:
 			# Get next reference
 			service = self.scanServices.pop(0)
 		except IndexError:
 			# Debug
-			print "[EPGRefresh] Done refreshing EPG"
+			print("[EPGRefresh] Done refreshing EPG")
 
 			# Clean up
 			self.cleanUp()

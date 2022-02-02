@@ -35,7 +35,7 @@ class PowerState(Source):
 				return self.getStandby()
 
 			elif type == 0:
-				print "[PowerState.py] Standby 0"
+				print("[PowerState.py] Standby 0")
 				if inStandby == None:					
 					self.session.open(Standby)
 					return "true"
@@ -44,14 +44,14 @@ class PowerState(Source):
 					return "false"
 							
 			elif type == 4:
-				print "[PowerState.py] Standby 4"
+				print("[PowerState.py] Standby 4")
 				if inStandby != None:
 					inStandby.Power()
 					return "false"
 				else:
 					return "true"
 			elif type == 5:
-				print "[PowerState.py] Standby 5"
+				print("[PowerState.py] Standby 5")
 				if inStandby == None:					
 					self.session.open(Standby)
 					return "true"	
@@ -59,13 +59,13 @@ class PowerState(Source):
 					return "false"
 				
 			elif 0 < type < 4:
-				print "[PowerState.py] TryQuitMainloop"
+				print("[PowerState.py] TryQuitMainloop")
 				from Screens.Standby import TryQuitMainloop
 				self.session.open(TryQuitMainloop, type)
 				return "true"
 							
 			else:
-				print "[PowerState.py] cmd unknown" % type
+				print("[PowerState.py] cmd unknown" % type)
 				return "error"
 			
 		except ValueError:

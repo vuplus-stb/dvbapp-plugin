@@ -196,7 +196,7 @@ class Mosaic(Screen):
 		self.close()
 
 	def deleteConsoleCallbacks(self):
-		if self.Console.appContainers.has_key(self.consoleCmd):
+		if self.consoleCmd in self.Console.appContainers:
 			del self.Console.appContainers[self.consoleCmd].dataAvail[:]
 			del self.Console.appContainers[self.consoleCmd].appClosed[:]
 			del self.Console.appContainers[self.consoleCmd]
@@ -301,7 +301,7 @@ class Mosaic(Screen):
 			self.working = False
 			self.updateTimer.start(1, 1)
 		else:
-			print "[Mosaic] retval: %d result: %s" % (retval, result)
+			print(("[Mosaic] retval: %d result: %s" % (retval, result)))
 			
 			try:
 				f = open(grab_errorlog, "w")

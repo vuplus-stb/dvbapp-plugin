@@ -7,7 +7,7 @@ from os import uname
 from Screens.MessageBox import MessageBox
 from Tools import Notifications
 
-from GrowleeConnection import emergencyDisable
+from .GrowleeConnection import emergencyDisable
 from . import NOTIFICATIONID
 
 SYSLOG_UDP_PORT = 514
@@ -25,7 +25,7 @@ SEVERITY = {
 	'warning': 4, 'notice': 5, 'info': 6, 'debug': 7
 }
 
-reverse = lambda map: dict(zip(map.values(), map.keys()))
+reverse = lambda map: dict(list(zip(list(map.values()), list(map.keys()))))
 
 SEVERITYMAP = {
 	MessageBox.TYPE_YESNO: SEVERITY['debug'],
@@ -43,7 +43,7 @@ class SyslogNetworkProtocol(DatagramProtocol):
 		self.addr = (ip, SYSLOG_UDP_PORT)
 
 	def noIP(self, error):
-		print "--------------------------------", error
+		print(("--------------------------------", error))
 		emergencyDisable()
 
 	def startProtocol(self):

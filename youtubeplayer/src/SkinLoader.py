@@ -25,7 +25,7 @@ import os
 
 def loadSkinReal(skinPath):
 	if os.path.exists(skinPath):
-		print "[SKLDR] Loading skin ", skinPath
+		print("[SKLDR] Loading skin ", skinPath)
 		loadSkin(skinPath)
 
 

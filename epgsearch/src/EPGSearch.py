@@ -12,7 +12,7 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.EpgSelection import EPGSelection
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from NTIVirtualKeyBoard import NTIVirtualKeyBoard
+from .NTIVirtualKeyBoard import NTIVirtualKeyBoard
 
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -251,7 +251,7 @@ class EPGSearch(EPGSelection):
 
 			# Read in configuration
 			autotimer.readXml()
-		except Exception, e:
+		except Exception as e:
 			self.session.open(
 				MessageBox,
 				_("Could not read AutoTimer timer list: %s") % e,

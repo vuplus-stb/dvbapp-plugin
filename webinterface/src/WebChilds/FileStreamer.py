@@ -1,5 +1,5 @@
 from twisted.web import resource, http, server, static
-from urllib import unquote
+from urllib.parse import unquote
 from os import path as os_path
 
 class FileStreamer(resource.Resource):
@@ -21,7 +21,7 @@ class FileStreamer(resource.Resource):
 			if not os_path.exists(path):
 				path = "/hdd/movie/%s" % (filename)
 			
-			print "[WebChilds.FileStreamer] path is %s" %path
+			print("[WebChilds.FileStreamer] path is %s" %path)
 			
 			if os_path.exists(path):
 				basename = filename.decode('utf-8', 'ignore').encode('ascii', 'ignore')

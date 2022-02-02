@@ -4,7 +4,7 @@ from . import _
 # GUI (Screens)
 from Screens.Screen import Screen
 from Components.ConfigList import ConfigListScreen
-from EPGRefreshChannelEditor import EPGRefreshServiceEditor
+from .EPGRefreshChannelEditor import EPGRefreshServiceEditor
 
 # GUI (Summary)
 from Screens.Setup import SetupSummary
@@ -16,7 +16,7 @@ from Components.Sources.StaticText import StaticText
 # Configuration
 from Components.config import config, getConfigListEntry
 
-from EPGRefresh import epgrefresh
+from .EPGRefresh import epgrefresh
 from Components.SystemInfo import SystemInfo
 
 class EPGRefreshConfiguration(Screen, ConfigListScreen):

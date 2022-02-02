@@ -18,8 +18,8 @@
 #    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ############################################################################
 
-from YouTubeInterface import interface
-from YouTubeAddPlayList import YouTubeAddPlaylistDialog
+from .YouTubeInterface import interface
+from .YouTubeAddPlayList import YouTubeAddPlaylistDialog
 from Components.ActionMap import ActionMap
 from Components.MenuList import MenuList
 from Components.Label import Label
@@ -75,7 +75,7 @@ class YouTubePlaylistScreen(Screen):
 			feed = interface.getPlaylistFeed()
 			for entry in feed.getEntries():
 				self.list.append(YouTubePlaylistEntryComponent(entry))
-		except Exception, e:
+		except Exception as e:
 			self.session.open(MessageBox, _("Error loading playlists:\n%s" %
 					e), MessageBox.TYPE_ERROR)
 		self["list"].setList(self.list)

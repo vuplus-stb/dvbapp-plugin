@@ -12,7 +12,7 @@ def localeInit():
 def _(txt):
 	t = gettext.dgettext("StartUpService", txt)
 	if t == txt:
-		print "[StartUpService] fallback to default translation for", txt
+		print(("[StartUpService] fallback to default translation for", txt))
 		t = gettext.gettext(txt)
 	return t
 

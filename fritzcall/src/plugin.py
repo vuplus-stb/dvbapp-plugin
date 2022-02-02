@@ -43,11 +43,11 @@ from twisted.internet.protocol import ReconnectingClientFactory #@UnresolvedImpo
 from twisted.protocols.basic import LineReceiver #@UnresolvedImport
 from twisted.web.client import getPage #@UnresolvedImport
 
-from urllib import urlencode 
+from urllib.parse import urlencode 
 import re, time, os, hashlib, traceback
 
-from nrzuname import ReverseLookupAndNotifier, html2unicode
-import FritzOutlookCSV, FritzLDIF
+from .nrzuname import ReverseLookupAndNotifier, html2unicode
+from . import FritzOutlookCSV, FritzLDIF
 from . import _, initDebug, debug #@UnresolvedImport # pylint: disable=E0611,F0401
 
 from enigma import getDesktop
@@ -130,18 +130,18 @@ def getMountedDevs():
 	mountedDevs = [(resolveFilename(SCOPE_CONFIG), _("Flash")),
 				   (resolveFilename(SCOPE_MEDIA, "cf"), _("Compact Flash")),
 				   (resolveFilename(SCOPE_MEDIA, "usb"), _("USB Device"))]
-	mountedDevs += map(lambda p: (p.mountpoint, (_(p.description) if p.description else "")), harddiskmanager.getMountedPartitions(True))
+	mountedDevs += [(p.mountpoint, (_(p.description) if p.description else "")) for p in harddiskmanager.getMountedPartitions(True)]
 	mediaDir = resolveFilename(SCOPE_MEDIA)
 	for p in os.listdir(mediaDir):
 		if os.path.join(mediaDir, p) not in [path[0] for path in mountedDevs]:
 			mountedDevs.append((os.path.join(mediaDir, p), _("Media directory")))
 	debug("[FritzCall] getMountedDevs1: %s" %repr(mountedDevs))
-	mountedDevs = filter(lambda path: os.path.isdir(path[0]) and os.access(path[0], os.W_OK|os.X_OK), mountedDevs)
+	mountedDevs = [path for path in mountedDevs if os.path.isdir(path[0]) and os.access(path[0], os.W_OK|os.X_OK)]
 	# put this after the write/executable check, that is far too slow...
 	netDir = resolveFilename(SCOPE_MEDIA, "net")
 	if os.path.isdir(netDir):
-		mountedDevs += map(lambda p: (os.path.join(netDir, p), _("Network mount")), os.listdir(netDir))
-	mountedDevs = map(handleMountpoint, mountedDevs)
+		mountedDevs += [(os.path.join(netDir, p), _("Network mount")) for p in os.listdir(netDir)]
+	mountedDevs = list(map(handleMountpoint, mountedDevs))
 	return mountedDevs
 config.plugins.FritzCall.phonebookLocation = ConfigSelection(choices=getMountedDevs())
 
@@ -199,8 +199,8 @@ def resolveNumberWithAvon(number, countrycode):
 		return ""
 	
 	# debug('normNumer: ' + normNumber)
-	for i in reversed(range(min(10, len(number)))):
-		if avon.has_key(normNumber[:i]):
+	for i in reversed(list(range(min(10, len(number))))):
+		if normNumber[:i] in avon:
 			return '[' + avon[normNumber[:i]].strip() + ']'
 	return ""
 
@@ -246,7 +246,7 @@ def initCbC():
 		debug("[FritzCall] initCbC: callbycallFileName does not exist?!?!")
 
 def stripCbCPrefix(number, countrycode):
-	if number and number[:2] != "00" and cbcInfos.has_key(countrycode):
+	if number and number[:2] != "00" and countrycode in cbcInfos:
 		for cbc in cbcInfos[countrycode]:
 			if len(cbc.getElementsByTagName("length"))<1 or len(cbc.getElementsByTagName("prefix"))<1:
 				debug("[FritzCall] stripCbCPrefix: entries for " + countrycode + " %s invalid")
@@ -743,13 +743,13 @@ class FritzCallFBF:
 			
 		callListL = []
 		if config.plugins.FritzCall.filter.value and config.plugins.FritzCall.filterCallList.value:
-			filtermsns = map(lambda x: x.strip(), config.plugins.FritzCall.filtermsn.value.split(","))
+			filtermsns = [x.strip() for x in config.plugins.FritzCall.filtermsn.value.split(",")]
 			debug("[FritzCallFBF] _gotPageCalls: filtermsns %s" % (repr(filtermsns)))
 
 		# Typ;Datum;Name;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer
 		# 0  ;1    ;2   ;3        ;4          ;5               ;6
-		lines = map(lambda line: line.split(';'), lines)
-		lines = filter(lambda line: (len(line)==7 and (line[0]=="Typ" or self._callType == '.' or line[0] == self._callType)), lines)
+		lines = [line.split(';') for line in lines]
+		lines = [line for line in lines if (len(line)==7 and (line[0]=="Typ" or self._callType == '.' or line[0] == self._callType))]
 
 		for line in lines:
 			# debug("[FritzCallFBF] _gotPageCalls: line %s" % (line))
@@ -1622,7 +1622,7 @@ class FritzMenu(Screen, HelpableScreen):
 		self._wlanActive = (wlanState[0] == '1')
 		self._mailboxActive = False
 		try:
-			if not self.has_key("FBFInfo"): # screen is closed already
+			if "FBFInfo" not in self: # screen is closed already
 				return
 
 			if boxInfo:
@@ -1915,7 +1915,7 @@ class FritzDisplayCalls(Screen, HelpableScreen):
 			self["entries"].setIndex(1)
 
 	def updateStatus(self, text):
-		if self.has_key("statusbar"):
+		if "statusbar" in self:
 			self["statusbar"].setText(_("Getting calls from FRITZ!Box...") + ' ' + text)
 
 	def showEntry(self):
@@ -2183,7 +2183,7 @@ class FritzCallPhonebook:
 					os.rename(phonebookFilename, phonebookFilename + ".bck")
 					fNew = open(phonebookFilename, 'w')
 					# Beware: strings in phonebook.phonebook are utf-8!
-					for (number, name) in self.phonebook.iteritems():
+					for (number, name) in list(self.phonebook.items()):
 						# Beware: strings in PhoneBook.txt have to be in utf-8!
 						fNew.write(number + "#" + name.encode("utf-8"))
 					fNew.close()
@@ -2236,14 +2236,14 @@ class FritzCallPhonebook:
 			if number[0] != '0':
 				number = prefix + number
 				# debug("[FritzCallPhonebook] search: added prefix: %s" %number)
-			elif number[:len(prefix)] == prefix and self.phonebook.has_key(number[len(prefix):]):
+			elif number[:len(prefix)] == prefix and number[len(prefix):] in self.phonebook:
 				# debug("[FritzCallPhonebook] search: same prefix")
 				name = self.phonebook[number[len(prefix):]]
 				# debug("[FritzCallPhonebook] search: result: %s" %name)
 		else:
 			prefix = ""
 				
-		if not name and self.phonebook.has_key(number):
+		if not name and number in self.phonebook:
 			name = self.phonebook[number]
 				
 		return name.replace(", ", "\n").strip()
@@ -2408,7 +2408,7 @@ class FritzCallPhonebook:
 			debug("[FritzCallPhonebook] displayPhonebook/display")
 			self.sortlist = []
 			# Beware: strings in phonebook.phonebook are utf-8!
-			sortlistHelp = sorted((name.lower(), name, number) for (number, name) in phonebook.phonebook.iteritems())
+			sortlistHelp = sorted((name.lower(), name, number) for (number, name) in list(phonebook.phonebook.items()))
 			for (low, name, number) in sortlistHelp:
 				if number == "01234567890":
 					continue
@@ -3387,7 +3387,7 @@ def autostart(reason, **kwargs):
 	global fritz_call
 
 	# ouch, this is a hack
-	if kwargs.has_key("session"):
+	if "session" in kwargs:
 		global my_global_session
 		my_global_session = kwargs["session"]
 		return

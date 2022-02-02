@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from re import sub, finditer
 
-import htmlentitydefs
+import html.entities
 
 def strip_readable(html):
 	# Newlines are rendered as whitespace in html
@@ -37,7 +37,7 @@ def strip(html):
 	for x in entities:
 		key = x.group(0)
 		if key not in entitydict:
-			entitydict[key] = htmlentitydefs.name2codepoint[x.group(1)]
+			entitydict[key] = html.entities.name2codepoint[x.group(1)]
 
 	entities = finditer('&#x([0-9A-Fa-f]{2,2}?);', html)
 	for x in entities:
@@ -51,8 +51,8 @@ def strip(html):
 		if key not in entitydict:
 			entitydict[key] = x.group(1)
 
-	for key, codepoint in entitydict.items():
-		html = html.replace(key, unichr(int(codepoint)))
+	for key, codepoint in list(entitydict.items()):
+		html = html.replace(key, chr(int(codepoint)))
 
 	# Return result with leading/trailing whitespaces removed
 	return html.strip()

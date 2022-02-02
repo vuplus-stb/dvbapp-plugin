@@ -12,7 +12,7 @@ def localeInit():
 def _(txt):
 	t = gettext.dgettext("MovieSelectionQuickButton", txt)
 	if t == txt:
-		print "[MovieSelectionQuickButton] fallback to default translation for", txt
+		print(("[MovieSelectionQuickButton] fallback to default translation for", txt))
 		t = gettext.gettext(txt)
 	return t
 

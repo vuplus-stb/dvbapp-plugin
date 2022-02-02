@@ -11,7 +11,7 @@ def main(session, servicelist, **kwargs):
 	# Create Instance if none present, show Dialog afterwards
 	global zapperInstance
 	if zapperInstance is None:
-		from WerbeZapper import WerbeZapper
+		from .WerbeZapper import WerbeZapper
 		zapperInstance = WerbeZapper(session, servicelist, cleanup)
 	zapperInstance.showSelection()
 

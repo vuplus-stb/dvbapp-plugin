@@ -48,8 +48,8 @@ class Interface(StreamInterface):
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from cPickle import dump, load
-from urllib import FancyURLopener
+from pickle import dump, load
+from urllib.request import FancyURLopener
 from xml.sax import parseString
 from xml.sax.handler import ContentHandler
 from os import stat, mkdir
@@ -68,7 +68,7 @@ def write_cache(cache_file, cache_data):
         try:
             mkdir( dirname(cache_file) )
         except OSError:
-            print dirname(cache_file), 'is a file'
+            print((dirname(cache_file), 'is a file'))
     fd = open(cache_file, 'w')
     dump(cache_data, fd, -1)
     fd.close()
@@ -141,7 +141,7 @@ class StationParser(ContentHandler):
         if name == 'stationlist':
             self.isStationList = False
             if DEBUG == 1:
-                print 'Parsed ', self.count, ' stations'
+                print(('Parsed ', self.count, ' stations'))
 
 class GenreParse(ContentHandler):
     def __init__( self ):
@@ -187,7 +187,7 @@ class GenreFeed:
                 ct = None
         if not ct or (time.time() - ct) > self.cache_ttl:
             if DEBUG == 1:
-                print 'Getting fresh feed'
+                print('Getting fresh feed')
             try:
 	        parseXML = GenreParse()
 	        self.genres = self.fetch_genres()
@@ -195,7 +195,7 @@ class GenreFeed:
 	        self.genre_list = parseXML.genreList
 	        write_cache(self.cache_file, self.genre_list)
 	    except:
-	    	print "Failed to get genres from server, sorry."
+	    	print("Failed to get genres from server, sorry.")
         return self.genre_list
 
 class ShoutcastFeed:
@@ -232,7 +232,7 @@ class ShoutcastFeed:
             try:
                 self.station_list = load_cache(self.cache_file)
             except:
-            	print "Failed to load cache."
+            	print("Failed to load cache.")
         if not ct or (time.time() - ct) > self.cache_ttl:
             try:
                 parseXML = StationParser(self.min_bitrate)
@@ -241,5 +241,5 @@ class ShoutcastFeed:
                 self.station_list = parseXML.station_list
                 write_cache(self.cache_file, self.station_list)
             except:
-            	print "Failed to get a new station list, sorry."
+            	print("Failed to get a new station list, sorry.")
         return self.station_list

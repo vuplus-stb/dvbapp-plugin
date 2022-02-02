@@ -25,7 +25,7 @@ class ServiceplayerResource(resource.Resource):
 		return server.NOT_DONE_YET
 
 	def playFile(self, path):
-		print "[ServiceplayerResource] playing file", path
+		print("[ServiceplayerResource] playing file", path)
 		if os_path.exists(path) is not True:
 			return False, "given path is not existing, %s" % path
 		else:
@@ -41,7 +41,7 @@ class ServiceplayerResource(resource.Resource):
 		return False, "Not implemented"
 
 	def startServicePlay(self, esref):
-		print "[ServiceplayerResource] playing sref", esref.toString()
+		print("[ServiceplayerResource] playing sref", esref.toString())
 		csref = self.session.nav.getCurrentlyPlayingServiceReference()
 		if csref is not None:
 			if csref.toString().startswith("4097") is not True:
@@ -51,7 +51,7 @@ class ServiceplayerResource(resource.Resource):
 		self.session.nav.playService(esref)
 
 	def stopServicePlay(self):
-		print "[ServiceplayerResource] stopping service", self.oldservice
+		print("[ServiceplayerResource] stopping service", self.oldservice)
 		self.session.nav.stopService()
 		if self.oldservice is not None:
 			self.session.nav.playService(self.oldservice[1])

@@ -8,7 +8,7 @@ class ReadPluginList(Source):
 		self.session = session
 
 	def command(self):
-		print "[WebComponents.ReadPluginList] readPluginList"
+		print("[WebComponents.ReadPluginList] readPluginList")
 
 		plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
 		return ( True, "List of Plugins has been read" )

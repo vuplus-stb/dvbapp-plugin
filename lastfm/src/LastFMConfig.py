@@ -46,7 +46,7 @@ class LastFMConfigScreen(ConfigListScreen,Screen):
         }, -2)
 
     def save(self):
-        print "saving"
+        print("saving")
 
         
         for x in self["config"].list:
@@ -54,7 +54,7 @@ class LastFMConfigScreen(ConfigListScreen,Screen):
         self.close(True)
 
     def cancel(self):
-        print "cancel"
+        print("cancel")
         for x in self["config"].list:
             x[1].cancel()
         self.close(False)

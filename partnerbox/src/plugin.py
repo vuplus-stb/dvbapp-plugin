@@ -40,21 +40,21 @@ from enigma import eTimer
 from time import localtime
 import time
 import xml.etree.cElementTree
-import urllib
-import SocketServer
-import servicewebts
+import urllib.request, urllib.parse, urllib.error
+import socketserver
+from . import servicewebts
 ENIGMA_WEBSERVICE_ID = 0x1012
 from Screens.InfoBarGenerics import InfoBarAudioSelection
-from RemoteTimerEntry import RemoteTimerEntry, RemoteTimerInit
-from PartnerboxEPGSelection import Partnerbox_EPGSelectionInit
+from .RemoteTimerEntry import RemoteTimerEntry, RemoteTimerInit
+from .PartnerboxEPGSelection import Partnerbox_EPGSelectionInit
 
-from PartnerboxFunctions import PlaylistEntry, FillE1TimerList, E2Timer, FillE2TimerList, SetPartnerboxTimerlist, sendPartnerBoxWebCommand, isInTimerList
+from .PartnerboxFunctions import PlaylistEntry, FillE1TimerList, E2Timer, FillE2TimerList, SetPartnerboxTimerlist, sendPartnerBoxWebCommand, isInTimerList
 
-from PartnerboxEPGList import Partnerbox_EPGListInit
-from PartnerboxSetup import PartnerboxSetup, PartnerboxEntriesListConfigScreen, PartnerboxEntryList, PartnerboxEntryConfigScreen, initPartnerboxEntryConfig, initConfig
+from .PartnerboxEPGList import Partnerbox_EPGListInit
+from .PartnerboxSetup import PartnerboxSetup, PartnerboxEntriesListConfigScreen, PartnerboxEntryList, PartnerboxEntryConfigScreen, initPartnerboxEntryConfig, initConfig
 import time
 
-from Services import Services, E2EPGListAllData, E2ServiceList
+from .Services import Services, E2EPGListAllData, E2ServiceList
 from Screens.ChannelSelection import service_types_tv
 
 from Components.ConfigList import ConfigList, ConfigListScreen
@@ -293,8 +293,8 @@ class RemoteTimer(Screen):
 			entry = answer[1]
 			self["timerlist"].instance.hide()
 			if self.enigma_type == 0:
-				ref_old = "&channelOld=" + urllib.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&beginOld=" + ("%s"%(self.oldstart)) + "&endOld=" + ("%s"%(self.oldend))  + "&deleteOldOnSave=1"
-				ref = urllib.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&begin=" + ("%s"%(entry.timebegin)) + "&end=" + ("%s"%(entry.timeend))  + "&name=" + urllib.quote(entry.name) + "&description=" + urllib.quote(entry.description) + "&dirname=" + urllib.quote(entry.dirname) + "&eit=0&justplay=" + ("%s"%(entry.justplay)) + "&afterevent=" + ("%s"%(entry.afterevent))
+				ref_old = "&channelOld=" + urllib.parse.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&beginOld=" + ("%s"%(self.oldstart)) + "&endOld=" + ("%s"%(self.oldend))  + "&deleteOldOnSave=1"
+				ref = urllib.parse.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&begin=" + ("%s"%(entry.timebegin)) + "&end=" + ("%s"%(entry.timeend))  + "&name=" + urllib.parse.quote(entry.name) + "&description=" + urllib.parse.quote(entry.description) + "&dirname=" + urllib.parse.quote(entry.dirname) + "&eit=0&justplay=" + ("%s"%(entry.justplay)) + "&afterevent=" + ("%s"%(entry.afterevent))
 				sCommand = self.http + "/web/timerchange?sRef=" + ref + ref_old
 				sendPartnerBoxWebCommand(sCommand, None,10, self.username, self.password).addCallback(self.deleteTimerCallback).addErrback(self.downloadError)
 			else:
@@ -309,7 +309,7 @@ class RemoteTimer(Screen):
 				ref_time_start = "&sday=" + ("%s"%(tstart.tm_mday)) + "&smonth=" + ("%s"%(tstart.tm_mon)) + "&syear=" + ("%s"%(tstart.tm_year)) + "&shour=" + ("%s"%(tstart.tm_hour)) + "&smin=" + ("%s"%(tstart.tm_min))
 				ref_time_end = "&eday=" + ("%s"%(tend.tm_mday)) + "&emonth=" + ("%s"%(tend.tm_mon)) + "&eyear=" + ("%s"%(tend.tm_year)) + "&ehour=" + ("%s"%(tend.tm_hour)) + "&emin=" + ("%s"%(tend.tm_min))
 				ref_old = "&old_type=" + ("%s"%(self.oldtype)) + "&old_stime=" + ("%s"%(self.oldstart)) + "&force=yes"
-				ref = urllib.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&descr=" + urllib.quote(entry.description) + "&channel=" + urllib.quote(entry.servicename) + "&after_event=" + ("%s"%(entry.afterevent)) + "&action=" + ("%s"%(action))
+				ref = urllib.parse.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&descr=" + urllib.parse.quote(entry.description) + "&channel=" + urllib.parse.quote(entry.servicename) + "&after_event=" + ("%s"%(entry.afterevent)) + "&action=" + ("%s"%(action))
 				sCommand = self.http + "/changeTimerEvent?ref=" + ref + ref_old + ref_time_start + ref_time_end
 				sendPartnerBoxWebCommand(sCommand, None,10, self.username, self.password).addCallback(self.deleteTimerCallback).addErrback(self.downloadError)
 	
@@ -595,9 +595,9 @@ class RemoteTimerChannelList(Screen):
 			self.ZapCallback(None)
 		else:
 			if self.enigma_type == 0:
-				url = self.http + "/web/zap?sRef=" + urllib.quote(sel.servicereference.decode('utf8').encode('latin-1','ignore'))
+				url = self.http + "/web/zap?sRef=" + urllib.parse.quote(sel.servicereference.decode('utf8').encode('latin-1','ignore'))
 			else:
-				url = self.http + "/cgi-bin/zapTo?path=" + urllib.quote(sel.servicereference.decode('utf8').encode('latin-1','ignore'))
+				url = self.http + "/cgi-bin/zapTo?path=" + urllib.parse.quote(sel.servicereference.decode('utf8').encode('latin-1','ignore'))
 			sendPartnerBoxWebCommand(url, None,10, self.username, self.password).addCallback(self.ZapCallback).addErrback(self.DoNotCareError)
 	
 	def DoNotCareError(self, dnce = None):
@@ -696,7 +696,7 @@ class RemoteTimerChannelList(Screen):
 			
 	def getChannelList(self):
 		if self.enigma_type == 0:
-			ref = urllib.quote(self.servicereference.decode('utf8').encode('latin-1','ignore'))
+			ref = urllib.parse.quote(self.servicereference.decode('utf8').encode('latin-1','ignore'))
 			url = self.http + "/web/epgnow?bRef=" + ref
 			sendPartnerBoxWebCommand(url, None,10, self.username, self.password).addCallback(self.ChannelListDownloadCallback).addErrback(self.ChannelListDownloadError)
 		else:
@@ -717,7 +717,7 @@ class RemoteTimerChannelList(Screen):
 					servicename = str(services.findtext("name", 'n/a').encode("utf-8", 'ignore'))
 					http_ = "%s:%d" % (self.ip,self.port)
 					url = "http://" + self.username + ":" + self.password + "@" + http_ + "/xml/serviceepg?ref=" + servicereference + "&entries=1"
-					f = urllib.urlopen(url)
+					f = urllib.request.urlopen(url)
 					sxml = f.read()
 					eventstart, eventduration, eventtitle, eventdescriptionextended, eventdescription, eventid = self.XMLReadEPGDataE1(sxml)
 					self.E2ChannelList.append(E2EPGListAllData(servicereference = servicereference, servicename = servicename, eventstart = eventstart, eventduration = eventduration, eventtitle = eventtitle, eventid = eventid , eventdescription= eventdescription, eventdescriptionextended = eventdescriptionextended))
@@ -914,7 +914,7 @@ class RemotePlayer(Screen, InfoBarAudioSelection):
 		self["DateTime"].setText(e2eventservicename + tt)
 
 	def CurrentEPGCallbackError(self, error = None):
-		print "[RemotePlayer] Error: ",error.getErrorMessage()
+		print(("[RemotePlayer] Error: ",error.getErrorMessage()))
 		
 #	def readXMSubChanelList(self, xmlstring):
 #		BouquetList = []
@@ -996,9 +996,9 @@ class RemoteTimerEPGList(Screen):
 		self.useinternal = int(partnerboxentry.useinternal.value)
 		
 		if self.enigma_type == 0:
-			self.url = self.http + "/web/epgservice?sRef=" + urllib.quote(self.servicereference.decode('utf8').encode('latin-1','ignore'))
+			self.url = self.http + "/web/epgservice?sRef=" + urllib.parse.quote(self.servicereference.decode('utf8').encode('latin-1','ignore'))
 		else:
-			self.url = self.http + "/xml/serviceepg?ref=" + urllib.quote(self.servicereference.decode('utf8').encode('latin-1','ignore'))
+			self.url = self.http + "/xml/serviceepg?ref=" + urllib.parse.quote(self.servicereference.decode('utf8').encode('latin-1','ignore'))
 		self.ListCurrentIndex = 0
 		self.Locations = []
 		
@@ -1158,7 +1158,7 @@ class RemoteTimerEPGList(Screen):
 			entry = answer[1]
 			self["epglist"].instance.hide()
 			if self.enigma_type == 0:
-				ref = urllib.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&begin=" + ("%s"%(entry.timebegin)) + "&end=" + ("%s"%(entry.timeend))  + "&name=" + urllib.quote(entry.name) + "&description=" + urllib.quote(entry.description) + "&dirname=" + urllib.quote(entry.dirname) + "&eit=0&justplay=" + ("%s"%(entry.justplay)) + "&afterevent=" + ("%s"%(entry.afterevent))
+				ref = urllib.parse.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&begin=" + ("%s"%(entry.timebegin)) + "&end=" + ("%s"%(entry.timeend))  + "&name=" + urllib.parse.quote(entry.name) + "&description=" + urllib.parse.quote(entry.description) + "&dirname=" + urllib.parse.quote(entry.dirname) + "&eit=0&justplay=" + ("%s"%(entry.justplay)) + "&afterevent=" + ("%s"%(entry.afterevent))
 				sCommand = self.http + "/web/timeradd?sRef=" + ref
 				sendPartnerBoxWebCommand(sCommand, None,10, self.username, self.password).addCallback(self.deleteTimerCallback).addErrback(self.EPGListDownloadError)
 			else:
@@ -1168,7 +1168,7 @@ class RemoteTimerEPGList(Screen):
 					action = "ngrab"
 				else:
 					action = ""
-				ref = urllib.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&start=" + ("%s"%(entry.timebegin)) + "&duration=" + ("%s"%(entry.timeend - entry.timebegin))  + "&descr=" + urllib.quote(entry.description) + "&channel=" + urllib.quote(entry.servicename) + "&after_event=" + ("%s"%(entry.afterevent)) + "&action=" + ("%s"%(action))
+				ref = urllib.parse.quote(entry.servicereference.decode('utf8').encode('latin-1','ignore')) + "&start=" + ("%s"%(entry.timebegin)) + "&duration=" + ("%s"%(entry.timeend - entry.timebegin))  + "&descr=" + urllib.parse.quote(entry.description) + "&channel=" + urllib.parse.quote(entry.servicename) + "&after_event=" + ("%s"%(entry.afterevent)) + "&action=" + ("%s"%(action))
 				sCommand = self.http + "/addTimerEvent?ref=" + ref
 				sendPartnerBoxWebCommand(sCommand, None,10, self.username, self.password).addCallback(self.deleteTimerCallback).addErrback(self.EPGListDownloadError)
 	

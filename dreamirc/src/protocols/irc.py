@@ -53,10 +53,10 @@ import socket
 from os import path
 
 NUL = chr(0)
-CR = chr(015)
-NL = chr(012)
+CR = chr(0o15)
+NL = chr(0o12)
 LF = NL
-SPC = chr(040)
+SPC = chr(0o40)
 
 CHANNEL_PREFIXES = '&#!+'
 
@@ -124,7 +124,7 @@ class IRC(protocol.Protocol):
 
     def sendLine(self, line):
         if self.encoding is not None:
-            if isinstance(line, unicode):
+            if isinstance(line, str):
                 line = line.encode(self.encoding)
         self.transport.write("%s%s%s" % (line, CR, LF))
 
@@ -138,16 +138,16 @@ class IRC(protocol.Protocol):
         """
 
         if not command:
-            raise ValueError, "IRC message requires a command."
+            raise ValueError("IRC message requires a command.")
 
         if ' ' in command or command[0] == ':':
             # Not the ONLY way to screw up, but provides a little
             # sanity checking to catch likely dumb mistakes.
-            raise ValueError, "Somebody screwed up, 'cuz this doesn't" \
-                  " look like a command to me: %s" % command
+            raise ValueError("Somebody screwed up, 'cuz this doesn't" \
+                  " look like a command to me: %s" % command)
 
         line = string.join([command] + list(parameter_list))
-        if prefix.has_key('prefix'):
+        if 'prefix' in prefix:
             line = ":%s %s" % (prefix['prefix'], line)
         self.sendLine(line)
 
@@ -884,8 +884,8 @@ class IRCClient(basic.LineReceiver):
                 raise ValueError("Maximum length must exceed %d for message "
                                  "to %s" % (minimumLength, user))
             lines = split(message, length - minimumLength)
-            map(lambda line, self=self, fmt=fmt: self.sendLine(fmt % line),
-                lines)
+            list(map(lambda line, self=self, fmt=fmt: self.sendLine(fmt % line),
+                lines))
 
     def notice(self, user, message):
         self.sendLine("NOTICE %s :%s" % (user, message))
@@ -935,14 +935,14 @@ class IRCClient(basic.LineReceiver):
 
         if len(self._pings) > self._MAX_PINGRING:
             # Remove some of the oldest entries.
-            byValue = [(v, k) for (k, v) in self._pings.items()]
+            byValue = [(v, k) for (k, v) in list(self._pings.items())]
             byValue.sort()
             excess = self._MAX_PINGRING - len(self._pings)
-            for i in xrange(excess):
+            for i in range(excess):
                 del self._pings[byValue[i][1]]
 
     def dccSend(self, user, file):
-        if type(file) == types.StringType:
+        if type(file) == bytes:
             file = open(file, 'r')
 
         size = fileSize(file)
@@ -952,7 +952,7 @@ class IRCClient(basic.LineReceiver):
         factory = DccSendFactory(file)
         port = reactor.listenTCP(0, factory, 1)
 
-        raise NotImplementedError,(
+        raise NotImplementedError(
             "XXX!!! Help!  I need to bind a socket, have it listen, and tell me its address.  "
             "(and stop accepting once we've made a single connection.)")
 
@@ -1291,7 +1291,7 @@ class IRCClient(basic.LineReceiver):
         # Use splitQuoted for those who send files with spaces in the names.
         data = text.splitQuoted(data)
         if len(data) < 3:
-            raise IRCBadMessage, "malformed DCC SEND request: %r" % (data,)
+            raise IRCBadMessage("malformed DCC SEND request: %r" % (data,))
 
         (filename, address, port) = data[:3]
 
@@ -1299,7 +1299,7 @@ class IRCClient(basic.LineReceiver):
         try:
             port = int(port)
         except ValueError:
-            raise IRCBadMessage, "Indecipherable port %r" % (port,)
+            raise IRCBadMessage("Indecipherable port %r" % (port,))
 
         size = -1
         if len(data) >= 4:
@@ -1314,7 +1314,7 @@ class IRCClient(basic.LineReceiver):
     def dcc_ACCEPT(self, user, channel, data):
         data = text.splitQuoted(data)
         if len(data) < 3:
-            raise IRCBadMessage, "malformed DCC SEND ACCEPT request: %r" % (data,)
+            raise IRCBadMessage("malformed DCC SEND ACCEPT request: %r" % (data,))
         (filename, port, resumePos) = data[:3]
         try:
             port = int(port)
@@ -1327,7 +1327,7 @@ class IRCClient(basic.LineReceiver):
     def dcc_RESUME(self, user, channel, data):
         data = text.splitQuoted(data)
         if len(data) < 3:
-            raise IRCBadMessage, "malformed DCC SEND RESUME request: %r" % (data,)
+            raise IRCBadMessage("malformed DCC SEND RESUME request: %r" % (data,))
         (filename, port, resumePos) = data[:3]
         try:
             port = int(port)
@@ -1339,7 +1339,7 @@ class IRCClient(basic.LineReceiver):
     def dcc_CHAT(self, user, channel, data):
         data = text.splitQuoted(data)
         if len(data) < 3:
-            raise IRCBadMessage, "malformed DCC CHAT request: %r" % (data,)
+            raise IRCBadMessage("malformed DCC CHAT request: %r" % (data,))
 
         (filename, address, port) = data[:3]
 
@@ -1347,7 +1347,7 @@ class IRCClient(basic.LineReceiver):
         try:
             port = int(port)
         except ValueError:
-            raise IRCBadMessage, "Indecipherable port %r" % (port,)
+            raise IRCBadMessage("Indecipherable port %r" % (port,))
 
         self.dccDoChat(user, channel, address, port, data)
 
@@ -1431,9 +1431,8 @@ class IRCClient(basic.LineReceiver):
 
     def ctcpReply_PING(self, user, channel, data):
         nick = user.split('!', 1)[0]
-        if (not self._pings) or (not self._pings.has_key((nick, data))):
-            raise IRCBadMessage,\
-                  "Bogus PING response from %s: %s" % (user, data)
+        if (not self._pings) or ((nick, data) not in self._pings):
+            raise IRCBadMessage("Bogus PING response from %s: %s" % (user, data))
 
         t0 = self._pings[(nick, data)]
         self.pong(user, time.time() - t0)
@@ -1479,7 +1478,7 @@ class IRCClient(basic.LineReceiver):
         line = lowDequote(line)
         try:
             prefix, command, params = parsemsg(line)
-            if numeric_to_symbolic.has_key(command):
+            if command in numeric_to_symbolic:
                 command = numeric_to_symbolic[command]
             self.handleCommand(command, prefix, params)
         except IRCBadMessage:
@@ -1512,10 +1511,9 @@ def dccParseAddress(address):
         pass
     else:
         try:
-            address = long(address)
+            address = int(address)
         except ValueError:
-            raise IRCBadMessage,\
-                  "Indecipherable address %r" % (address,)
+            raise IRCBadMessage("Indecipherable address %r" % (address,))
         else:
             address = (
                 (address >> 24) & 0xFF,
@@ -1562,7 +1560,7 @@ class DccSendProtocol(protocol.Protocol, styles.Ephemeral):
     connected = 0
 
     def __init__(self, file):
-        if type(file) is types.StringType:
+        if type(file) is bytes:
             self.file = open(file, 'r')
 
     def connectionMade(self):
@@ -1738,7 +1736,7 @@ def dccDescribe(data):
         pass
     else:
         try:
-            address = long(address)
+            address = int(address)
         except ValueError:
             pass
         else:
@@ -1750,7 +1748,7 @@ def dccDescribe(data):
                 )
             # The mapping to 'int' is to get rid of those accursed
             # "L"s which python 1.5.2 puts on the end of longs.
-            address = string.join(map(str,map(int,address)), ".")
+            address = string.join(list(map(str,list(map(int,address)))), ".")
 
     if dcctype == 'SEND':
         filename = arg
@@ -1906,7 +1904,7 @@ class DccFileReceive(DccFileReceiveBasic):
 
 # CTCP constants and helper functions
 
-X_DELIM = chr(001)
+X_DELIM = chr(0o01)
 
 def ctcpExtract(message):
     """Extract CTCP data from a string.
@@ -1933,11 +1931,11 @@ def ctcpExtract(message):
             normal_messages.append(messages.pop(0))
         odd = not odd
 
-    extended_messages[:] = filter(None, extended_messages)
-    normal_messages[:] = filter(None, normal_messages)
+    extended_messages[:] = [_f for _f in extended_messages if _f]
+    normal_messages[:] = [_f for _f in normal_messages if _f]
 
-    extended_messages[:] = map(ctcpDequote, extended_messages)
-    for i in xrange(len(extended_messages)):
+    extended_messages[:] = list(map(ctcpDequote, extended_messages))
+    for i in range(len(extended_messages)):
         m = string.split(extended_messages[i], SPC, 1)
         tag = m[0]
         if len(m) > 1:
@@ -1951,7 +1949,7 @@ def ctcpExtract(message):
 
 # CTCP escaping
 
-M_QUOTE= chr(020)
+M_QUOTE= chr(0o20)
 
 mQuoteTable = {
     NUL: M_QUOTE + '0',
@@ -1961,7 +1959,7 @@ mQuoteTable = {
     }
 
 mDequoteTable = {}
-for k, v in mQuoteTable.items():
+for k, v in list(mQuoteTable.items()):
     mDequoteTable[v[-1]] = k
 del k, v
 
@@ -1992,7 +1990,7 @@ xQuoteTable = {
 
 xDequoteTable = {}
 
-for k, v in xQuoteTable.items():
+for k, v in list(xQuoteTable.items()):
     xDequoteTable[v[-1]] = k
 
 xEscape_re = re.compile('%s.' % (re.escape(X_QUOTE),), re.DOTALL)
@@ -2024,7 +2022,7 @@ def ctcpStringify(messages):
     coded_messages = []
     for (tag, data) in messages:
         if data:
-            if not isinstance(data, types.StringType):
+            if not isinstance(data, bytes):
                 try:
                     # data as list-of-strings
                     data = " ".join(map(str, data))
@@ -2325,5 +2323,5 @@ symbolic_to_numeric = {
 }
 
 numeric_to_symbolic = {}
-for k, v in symbolic_to_numeric.items():
+for k, v in list(symbolic_to_numeric.items()):
     numeric_to_symbolic[v] = k

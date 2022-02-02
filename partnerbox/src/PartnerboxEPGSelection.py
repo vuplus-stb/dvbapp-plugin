@@ -20,12 +20,12 @@
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.config import config
-from PartnerboxSetup import PartnerboxEntriesListConfigScreen
+from .PartnerboxSetup import PartnerboxEntriesListConfigScreen
 from Screens.EpgSelection import EPGSelection
 from Components.EpgList import EPG_TYPE_SINGLE, EPG_TYPE_SIMILAR, EPG_TYPE_MULTI
 from Tools.BoundFunction import boundFunction
-from PartnerboxFunctions import  SetPartnerboxTimerlist, isInTimerList, sendPartnerBoxWebCommand, FillE1TimerList, FillE2TimerList
-import PartnerboxFunctions as partnerboxfunctions
+from .PartnerboxFunctions import  SetPartnerboxTimerlist, isInTimerList, sendPartnerBoxWebCommand, FillE1TimerList, FillE2TimerList
+from . import PartnerboxFunctions as partnerboxfunctions
 
 # for localized messages
 from . import _
@@ -140,7 +140,7 @@ def GetPartnerboxTimerlist(self):
 			sCommand = http + "/web/timerlist"
 		else:
 			sCommand = http + "/xml/timers"
-		print "[Partnerbox] %s"%sCommand
+		print(("[Partnerbox] %s"%sCommand))
 		sendPartnerBoxWebCommand(sCommand, None,3, "root", self.partnerboxentry.password.value).addCallback(self.GetPartnerboxTimerlistCallback).addErrback(GetPartnerboxTimerlistCallbackError)
 
 
@@ -159,7 +159,7 @@ def GetPartnerboxTimerlistCallback(self, sxml = None):
 
 def GetPartnerboxTimerlistCallbackError(self, error = None):
 	if error is not None:
-		print str(error.getErrorMessage())
+		print((str(error.getErrorMessage())))
 
 def CheckRemoteTimer(self):
 	if self.key_green_choice != self.REMOVE_TIMER:

@@ -1142,13 +1142,13 @@ class AutoTimerServiceEditor(Screen, ConfigListScreen):
 		))
 
 def addAutotimerFromSearchString(session, match):
-	from AutoTimerComponent import preferredAutoTimerComponent
-	from AutoTimerImporter import AutoTimerImporter
-	from plugin import autotimer
+	from .AutoTimerComponent import preferredAutoTimerComponent
+	from .AutoTimerImporter import AutoTimerImporter
+	from .plugin import autotimer
 
 	# Create instance if needed
 	if autotimer is None:
-		from AutoTimer import AutoTimer
+		from .AutoTimer import AutoTimer
 		autotimer = AutoTimer()
 		autotimer.readXml()
 
@@ -1173,13 +1173,13 @@ def addAutotimerFromSearchString(session, match):
 	)
 
 def addAutotimerFromEvent(session, evt = None, service = None):
-	from AutoTimerComponent import preferredAutoTimerComponent
-	from AutoTimerImporter import AutoTimerImporter
-	from plugin import autotimer
+	from .AutoTimerComponent import preferredAutoTimerComponent
+	from .AutoTimerImporter import AutoTimerImporter
+	from .plugin import autotimer
 
 	# Create instance if needed
 	if autotimer is None:
-		from AutoTimer import AutoTimer
+		from .AutoTimer import AutoTimer
 		autotimer = AutoTimer()
 		autotimer.readXml()
 
@@ -1228,13 +1228,13 @@ def addAutotimerFromEvent(session, evt = None, service = None):
 	)
 
 def addAutotimerFromService(session, service = None):
-	from AutoTimerComponent import preferredAutoTimerComponent
-	from AutoTimerImporter import AutoTimerImporter
-	from plugin import autotimer
+	from .AutoTimerComponent import preferredAutoTimerComponent
+	from .AutoTimerImporter import AutoTimerImporter
+	from .plugin import autotimer
 
 	# Create instance if needed
 	if autotimer is None:
-		from AutoTimer import AutoTimer
+		from .AutoTimer import AutoTimer
 		autotimer = AutoTimer()
 		autotimer.readXml()
 
@@ -1301,16 +1301,16 @@ def importerCallback(ret):
 	else:
 		# Remove instance if not running in background
 		if not config.plugins.autotimer.autopoll.value:
-			from plugin import autotimer
+			from .plugin import autotimer
 			autotimer = None
 
 def editorCallback(ret):
 	if ret:
-		from plugin import autotimer
+		from .plugin import autotimer
 
 		# Create instance if needed (should have been created by addAutotimerFrom* above though)
 		if autotimer is None:
-			from AutoTimer import AutoTimer
+			from .AutoTimer import AutoTimer
 			autotimer = AutoTimer()
 			autotimer.readXml()
 

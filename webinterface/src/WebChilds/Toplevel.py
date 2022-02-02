@@ -4,16 +4,16 @@ from twisted.python import util
 from Components.config import config
 
 from Plugins.Extensions.WebInterface import __file__ 
-from Screenpage import ScreenPage
-from FileStreamer import FileStreamer
-from Screengrab import GrabResource
-from IPKG import IPKGResource
-from PlayService import ServiceplayerResource
+from .Screenpage import ScreenPage
+from .FileStreamer import FileStreamer
+from .Screengrab import GrabResource
+from .IPKG import IPKGResource
+from .PlayService import ServiceplayerResource
 #from Uploader import UploadResource
-from ServiceListSave import ServiceList
-from RedirecToCurrentStream import RedirecToCurrentStreamResource
+from .ServiceListSave import ServiceList
+from .RedirecToCurrentStream import RedirecToCurrentStreamResource
 
-from External.__init__ import importExternalModules
+from .External.__init__ import importExternalModules
 externalChildren = []
 
 def addExternalChild(child):

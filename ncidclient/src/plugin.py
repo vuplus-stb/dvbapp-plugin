@@ -36,7 +36,7 @@ import re, os
 from datetime import datetime
 
 from . import debug, _
-from reverselookup import ReverseLookupAndNotify
+from .reverselookup import ReverseLookupAndNotify
 
 my_global_session = None
 
@@ -87,18 +87,18 @@ def getMountedDevices():
 	mountedDevs = [(resolveFilename(SCOPE_CONFIG), _("Flash")),
 				   (resolveFilename(SCOPE_MEDIA, "cf"), _("Compact Flash")),
 				   (resolveFilename(SCOPE_MEDIA, "usb"), _("USB Device"))]
-	mountedDevs += map(lambda p: (p.mountpoint, (_(p.description) if p.description else "")), harddiskmanager.getMountedPartitions(True))
+	mountedDevs += [(p.mountpoint, (_(p.description) if p.description else "")) for p in harddiskmanager.getMountedPartitions(True)]
 	mediaDir = resolveFilename(SCOPE_MEDIA)
 	for p in os.listdir(mediaDir):
 		if os.path.join(mediaDir, p) not in [path[0] for path in mountedDevs]:
 			mountedDevs.append((os.path.join(mediaDir, p), _("Media directory")))
 	debug("[NcidClient] getMountedDevices1: %s" % repr(mountedDevs))
-	mountedDevs = filter(lambda path: os.path.isdir(path[0]) and os.access(path[0], os.W_OK | os.X_OK), mountedDevs)
+	mountedDevs = [path for path in mountedDevs if os.path.isdir(path[0]) and os.access(path[0], os.W_OK | os.X_OK)]
 	# put this after the write/executable check, that is far too slow...
 	netDir = resolveFilename(SCOPE_MEDIA, "net")
 	if os.path.isdir(netDir):
-		mountedDevs += map(lambda p: (os.path.join(netDir, p), _("Network mount")), os.listdir(netDir))
-	mountedDevs = map(handleMountpoint, mountedDevs)
+		mountedDevs += [(os.path.join(netDir, p), _("Network mount")) for p in os.listdir(netDir)]
+	mountedDevs = list(map(handleMountpoint, mountedDevs))
 	return mountedDevs
 
 config.plugins.NcidClient = ConfigSubsection()
@@ -155,8 +155,8 @@ def resolveNumberWithAvon(number, countrycode):
 		return ""
 	
 	# debug('normNumer: ' + normNumber)
-	for i in reversed(range(min(10, len(number)))):
-		if avon.has_key(normNumber[:i]):
+	for i in reversed(list(range(min(10, len(number))))):
+		if normNumber[:i] in avon:
 			return '[' + avon[normNumber[:i]].strip() + ']'
 	return ""
 
@@ -202,7 +202,7 @@ def initCbC():
 		debug("[NcidClient] initCbC: callbycallFileName does not exist?!?!")
 
 def stripCbCPrefix(number, countrycode):
-	if number and number[:2] != "00" and cbcInfos.has_key(countrycode):
+	if number and number[:2] != "00" and countrycode in cbcInfos:
 		for cbc in cbcInfos[countrycode]:
 			if len(cbc.getElementsByTagName("length")) < 1 or len(cbc.getElementsByTagName("prefix")) < 1:
 				debug("[NcidClient] stripCbCPrefix: entries for " + countrycode + " %s invalid")
@@ -292,7 +292,7 @@ class NcidClientPhonebook:
 					os.rename(phonebookFilename, phonebookFilename + ".bck")
 					fNew = open(phonebookFilename, 'w')
 					# Beware: strings in phonebook.phonebook are utf-8!
-					for (number, name) in self.phonebook.iteritems():
+					for (number, name) in list(self.phonebook.items()):
 						# Beware: strings in PhoneBook.txt have to be in utf-8!
 						fNew.write(number + "#" + name.encode("utf-8"))
 					fNew.close()
@@ -310,14 +310,14 @@ class NcidClientPhonebook:
 			if number[0] != '0':
 				number = prefix + number
 				# debug("[NcidClientPhonebook] search: added prefix: %s" %number)
-			elif number[:len(prefix)] == prefix and self.phonebook.has_key(number[len(prefix):]):
+			elif number[:len(prefix)] == prefix and number[len(prefix):] in self.phonebook:
 				# debug("[NcidClientPhonebook] search: same prefix")
 				name = self.phonebook[number[len(prefix):]]
 				# debug("[NcidClientPhonebook] search: result: %s" %name)
 		else:
 			prefix = ""
 				
-		if not name and self.phonebook.has_key(number):
+		if not name and number in self.phonebook:
 			name = self.phonebook[number]
 				
 		return name.replace(", ", "\n").strip()
@@ -469,7 +469,7 @@ class NcidClientPhonebook:
 			debug("[NcidClientPhonebook] displayPhonebook/display")
 			self.sortlist = []
 			# Beware: strings in phonebook.phonebook are utf-8!
-			sortlistHelp = sorted((name.lower(), name, number) for (number, name) in phonebook.phonebook.iteritems())
+			sortlistHelp = sorted((name.lower(), name, number) for (number, name) in list(phonebook.phonebook.items()))
 			for (low, name, number) in sortlistHelp:
 				if number == "01234567890":
 					continue
@@ -1086,7 +1086,7 @@ def autostart(reason, **kwargs):
 	global ncid_call
 
 	# ouch, this is a hack
-	if kwargs.has_key("session"):
+	if "session" in kwargs:
 		global my_global_session
 		my_global_session = kwargs["session"]
 		return

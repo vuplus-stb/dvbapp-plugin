@@ -30,8 +30,8 @@ from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, config
 from ServiceReference import ServiceReference
-from AutomaticVolumeAdjustment import AutomaticVolumeAdjustment
-from AutomaticVolumeAdjustmentConfig import AutomaticVolumeAdjustmentConfig
+from .AutomaticVolumeAdjustment import AutomaticVolumeAdjustment
+from .AutomaticVolumeAdjustmentConfig import AutomaticVolumeAdjustmentConfig
 
 		
 class AutomaticVolumeAdjustmentConfigScreen(ConfigListScreen, Screen):

@@ -33,7 +33,7 @@ class AutoPoller:
 		self.timer.stop()
 
 	def query(self):
-		from plugin import autotimer
+		from .plugin import autotimer
 
 		# Ignore any program errors
 		try:

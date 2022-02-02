@@ -12,7 +12,7 @@ config.plugins.epgsearch.history = ConfigSet(choices = [])
 config.plugins.epgsearch.encoding = ConfigText(default = 'ISO8859-15', fixed_size = False)
 
 # Plugin
-from EPGSearch import EPGSearch, EPGSearchEPGSelection, EPGSelectionInit
+from .EPGSearch import EPGSearch, EPGSearchEPGSelection, EPGSelectionInit
 
 # Plugin definition
 from Plugins.Plugin import PluginDescriptor

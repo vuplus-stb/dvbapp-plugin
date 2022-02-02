@@ -6,10 +6,10 @@
 
 import string
 
-from protocols import irc
+from .protocols import irc
 from twisted.internet import defer, reactor, protocol
 from twisted.internet.defer import succeed
-import e2support, interfaces,dreamIRCTools
+from . import e2support, interfaces,dreamIRCTools
 from zope.interface import implements
 
 class IRCPerson(e2support.AbstractPerson):
@@ -43,7 +43,7 @@ class IRCPerson(e2support.AbstractPerson):
 
     def bye(self):
         if self.account.client is None:
-            print "not connected"
+            print("not connected")
         else:
         	  self.account.client.quit("user logged off")    	  
 
@@ -53,7 +53,7 @@ class IRCGroup(e2support.AbstractGroup):
     implements(interfaces.IGroup)
 
     def imgroup_testAction(self):
-        print 'action test!'
+        print('action test!')
 
     def imtarget_kick(self, target):
         if self.account.client is None:
@@ -88,7 +88,7 @@ class IRCGroup(e2support.AbstractGroup):
         
     def bye(self):
         if self.account.client is None:
-            print "not connected"
+            print("not connected")
         else:
         	self.account.client.quit("user logged off")    	  
 
@@ -114,7 +114,7 @@ class IRCProto(e2support.AbstractClientMixin, irc.IRCClient):
     def connectionMade(self):
         # XXX: Why do I duplicate code in IRCClient.register?
         try:
-            print 'connection made on irc service!?', self
+            print(('connection made on irc service!?', self))
             self.pipe.debug("connection made on irc service!?")
             if self.account.password:
                 self.sendLine("PASS :%s" % self.account.password)
@@ -186,7 +186,7 @@ class IRCProto(e2support.AbstractClientMixin, irc.IRCClient):
         for ui in range(len(users)):
             while users[ui][0] in ["@","+"]: # channel modes
                 users[ui]=users[ui][1:]
-        if not self._namreplies.has_key(group):
+        if group not in self._namreplies:
             self._namreplies[group]=[]
         self._namreplies[group].extend(users)
         for nickname in users:
@@ -236,7 +236,7 @@ class IRCProto(e2support.AbstractClientMixin, irc.IRCClient):
 
     def irc_QUIT(self,prefix,params):
         nickname=string.split(prefix,"!")[0]
-        if self._ingroups.has_key(nickname):
+        if nickname in self._ingroups:
             for group in self._ingroups[nickname]:
                 self.getGroupConversation(group).memberLeft(nickname)
             self._ingroups[nickname]=[]
@@ -246,7 +246,7 @@ class IRCProto(e2support.AbstractClientMixin, irc.IRCClient):
     def irc_NICK(self, prefix, params):
         fromNick = string.split(prefix, "!")[0]
         toNick = params[0]
-        if not self._ingroups.has_key(fromNick):
+        if fromNick not in self._ingroups:
             self.pipe.debug("%s changed nick to %s. But she's not in any groups!?" % (fromNick, toNick))
             return
         for group in self._ingroups[fromNick]:
@@ -271,7 +271,7 @@ class IRCAccount(e2support.AbstractAccount):
 
     def __init__(self, accountName, autoLogin, username, password, host, port, channels=''):
         e2support.AbstractAccount.__init__(self, accountName, autoLogin, username, password, host, port)
-        self.channels = map(string.strip,string.split(channels,','))
+        self.channels = list(map(string.strip,string.split(channels,',')))
         if self.channels == ['']:
             self.channels = []
 

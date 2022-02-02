@@ -10,10 +10,10 @@ from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 
 # Download
-from VariableProgressSource import VariableProgressSource
+from .VariableProgressSource import VariableProgressSource
 
 from Components.config import config
-from urlparse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 
 import time
 
@@ -67,7 +67,7 @@ def download(url, file, writeProgress = None, contextFactory = None, \
 	scheme, host, port, path, username, password = _parse(url)
 
 	if scheme == 'ftp':
-		from FTPProgressDownloader import FTPProgressDownloader
+		from .FTPProgressDownloader import FTPProgressDownloader
 
 		if not (username and password):
 			username = 'anonymous'
@@ -97,12 +97,12 @@ def download(url, file, writeProgress = None, contextFactory = None, \
 		authHeader = "Basic " + basicAuth.strip()
 		AuthHeaders = {"Authorization": authHeader}
 
-		if kwargs.has_key("headers"):
+		if "headers" in kwargs:
 			kwargs["headers"].update(AuthHeaders)
 		else:
 			kwargs["headers"] = AuthHeaders
 
-	from HTTPProgressDownloader import HTTPProgressDownloader
+	from .HTTPProgressDownloader import HTTPProgressDownloader
 	from twisted.internet import reactor
 
 	factory = HTTPProgressDownloader(url, file, writeProgress, *args, **kwargs)
@@ -255,7 +255,7 @@ class MediaDownloader(Screen):
 
 	def error(self, msg = ""):
 		if msg != "":
-			print "[MediaDownloader] Error downloading:", msg
+			print(("[MediaDownloader] Error downloading:", msg))
 
 		self.session.open(
 			MessageBox,

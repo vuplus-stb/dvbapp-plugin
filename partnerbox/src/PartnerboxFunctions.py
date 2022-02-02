@@ -17,7 +17,7 @@
 #  GNU General Public License for more details.
 #
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from time import localtime
 from timer import TimerEntry
 from twisted.internet import reactor
@@ -219,7 +219,7 @@ def sendPartnerBoxWebCommand(url, contextFactory=None, timeout=60, username = "r
 	basicAuth = encodestring(("%s:%s")%(username,password))
 	authHeader = "Basic " + basicAuth.strip()
 	AuthHeaders = {"Authorization": authHeader}
-	if kwargs.has_key("headers"):
+	if "headers" in kwargs:
 		kwargs["headers"].update(AuthHeaders)
 	else:
 		kwargs["headers"] = AuthHeaders
@@ -280,8 +280,8 @@ def SetPartnerboxTimerlist(partnerboxentry = None, sreference = None):
 			sCommand = "http://%s:%s@%s:%d/web/timerlist" % (username, password, ip,port)
 		else:
 			sCommand = "http://%s:%s@%s:%d/xml/timers" % (username, password, ip,port)
-		print "[RemoteEPGList] Getting timerlist data from %s..."%ip
-		f = urllib.urlopen(sCommand)
+		print(("[RemoteEPGList] Getting timerlist data from %s..."%ip))
+		f = urllib.request.urlopen(sCommand)
 		sxml = f.read()
 		if int(partnerboxentry.enigma.value) == 0:
 			remote_timer_list = FillE2TimerList(sxml, sreference)

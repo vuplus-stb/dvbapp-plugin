@@ -282,7 +282,7 @@ class PreviewCreator:
 
 	def grabDone(self, result, retval, extra_args):
 		if retval != 0:
-			print result
+			print(result)
 		if self.callback:
 			self.callback()
 previewcreator = PreviewCreator()
@@ -543,7 +543,7 @@ try:
 	Show2 = MovieSelectionSP.show
 	MovieSelectionSP.show = showMovieSelection2
 except ImportError:
-	print "[Movielist Preview] Could not import Suomipoeka Plugin, maybe not installed or too old version?"
+	print("[Movielist Preview] Could not import Suomipoeka Plugin, maybe not installed or too old version?")
 
 ##############################################################################
 

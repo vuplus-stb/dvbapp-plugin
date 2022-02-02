@@ -18,8 +18,8 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 from Tools.LoadPixmap import LoadPixmap
-from VlcServerConfig import vlcServerConfig
-from VlcServerConfig import VlcServerConfigScreen
+from .VlcServerConfig import vlcServerConfig
+from .VlcServerConfig import VlcServerConfigScreen
 from enigma import eListboxPythonMultiContent, RT_HALIGN_LEFT, gFont
 from . import _
 

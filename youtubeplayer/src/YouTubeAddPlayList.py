@@ -28,7 +28,7 @@ from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 
-from ConfigTextWithSuggestions import ConfigTextWithSuggestions
+from .ConfigTextWithSuggestions import ConfigTextWithSuggestions
 
 from . import _
 

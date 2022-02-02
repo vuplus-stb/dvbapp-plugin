@@ -50,7 +50,7 @@ class AutomaticVolumeAdjustmentConfig():
 
 	# load config file and initialize 
 	def loadConfigFile(self):
-		print "[AutomaticVolumeAdjustmentConfig] Loading config file..."
+		print("[AutomaticVolumeAdjustmentConfig] Loading config file...")
 		self.config = Config()
 		if not os_path.exists(self.CONFIG_FILE):
 			fd = os_open( self.CONFIG_FILE, os_O_RDWR|os_O_CREAT)
@@ -72,7 +72,7 @@ class AutomaticVolumeAdjustmentConfig():
 			while i < count:
 				self.initEntryConfig()
 				i += 1
-		print "[AutomaticVolumeAdjustmentConfig] Loaded %s entries from config file..." % count
+		print(("[AutomaticVolumeAdjustmentConfig] Loaded %s entries from config file..." % count))
 
 	def initEntryConfig(self):
 		self.config.Entries.append(ConfigSubsection())
@@ -90,5 +90,5 @@ class AutomaticVolumeAdjustmentConfig():
 		self.save()
 	
 	def save(self):
-		print "[AutomaticVolumeAdjustmentConfig] saving config file..."
+		print("[AutomaticVolumeAdjustmentConfig] saving config file...")
 		self.config.saveToFile(self.CONFIG_FILE)

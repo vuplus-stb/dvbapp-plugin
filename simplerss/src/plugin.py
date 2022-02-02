@@ -45,16 +45,16 @@ def main(session, **kwargs):
 
 	# Create one if we have none (no autostart)
 	if rssPoller is None:
-		from RSSPoller import RSSPoller
+		from .RSSPoller import RSSPoller
 		rssPoller = RSSPoller()
 
 	# Show Overview when we have feeds
 	if rssPoller.feeds:
-		from RSSScreens import RSSOverview
+		from .RSSScreens import RSSOverview
 		session.openWithCallback(closed, RSSOverview, rssPoller)
 	# Show Setup otherwise
 	else:
-		from RSSSetup import RSSSetup
+		from .RSSSetup import RSSSetup
 		session.openWithCallback(closed, RSSSetup, rssPoller)
 
 # Plugin window has been closed
@@ -75,9 +75,9 @@ def autostart(reason, **kwargs):
 
 	# Instanciate when autostart active, session present and enigma2 is launching
 	if config.plugins.simpleRSS.autostart.value and \
-		kwargs.has_key("session") and reason == 0:
+		"session" in kwargs and reason == 0:
 
-		from RSSPoller import RSSPoller
+		from .RSSPoller import RSSPoller
 		rssPoller = RSSPoller()
 	elif reason == 1:
 		if rssPoller is not None:
@@ -86,7 +86,7 @@ def autostart(reason, **kwargs):
 
 # Filescan
 def filescan_open(item, session, **kwargs):
-	from RSSSetup import addFeed
+	from .RSSSetup import addFeed
 
 	# Add earch feed
 	for each in item:

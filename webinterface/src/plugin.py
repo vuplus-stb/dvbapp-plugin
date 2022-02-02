@@ -6,8 +6,8 @@ from Plugins.Plugin import PluginDescriptor
 from Components.config import config, ConfigBoolean, ConfigSubsection, ConfigInteger, ConfigYesNo, ConfigText
 from Components.Network import iNetwork
 from Screens.MessageBox import MessageBox
-from WebIfConfig import WebIfConfigScreen
-from WebChilds.Toplevel import getToplevel
+from .WebIfConfig import WebIfConfigScreen
+from .WebChilds.Toplevel import getToplevel
 from Tools.HardwareInfo import HardwareInfo
 
 from Tools.Directories import copyfile, resolveFilename, SCOPE_PLUGINS, SCOPE_CONFIG
@@ -20,8 +20,8 @@ from socket import gethostname as socket_gethostname
 from OpenSSL import SSL
 
 from os.path import isfile as os_isfile
-from __init__ import _, __version__, decrypt_block
-from webif import get_random, validate_certificate
+from .__init__ import _, __version__, decrypt_block
+from .webif import get_random, validate_certificate
 
 tpm = eTPM()
 rootkey = ['\x9f', '|', '\xe4', 'G', '\xc9', '\xb4', '\xf4', '#', '&', '\xce', '\xb3', '\xfe', '\xda', '\xc9', 'U', '`', '\xd8', '\x8c', 's', 'o', '\x90', '\x9b', '\\', 'b', '\xc0', '\x89', '\xd1', '\x8c', '\x9e', 'J', 'T', '\xc5', 'X', '\xa1', '\xb8', '\x13', '5', 'E', '\x02', '\xc9', '\xb2', '\xe6', 't', '\x89', '\xde', '\xcd', '\x9d', '\x11', '\xdd', '\xc7', '\xf4', '\xe4', '\xe4', '\xbc', '\xdb', '\x9c', '\xea', '}', '\xad', '\xda', 't', 'r', '\x9b', '\xdc', '\xbc', '\x18', '3', '\xe7', '\xaf', '|', '\xae', '\x0c', '\xe3', '\xb5', '\x84', '\x8d', '\r', '\x8d', '\x9d', '2', '\xd0', '\xce', '\xd5', 'q', '\t', '\x84', 'c', '\xa8', ')', '\x99', '\xdc', '<', '"', 'x', '\xe8', '\x87', '\x8f', '\x02', ';', 'S', 'm', '\xd5', '\xf0', '\xa3', '_', '\xb7', 'T', '\t', '\xde', '\xa7', '\xf1', '\xc9', '\xae', '\x8a', '\xd7', '\xd2', '\xcf', '\xb2', '.', '\x13', '\xfb', '\xac', 'j', '\xdf', '\xb1', '\x1d', ':', '?']
@@ -71,7 +71,7 @@ class Closer:
 	def stop(self):
 		global running_defered
 		for d in running_defered:
-			print "[Webinterface] stopping interface on ", d.interface, " with port", d.port
+			print("[Webinterface] stopping interface on ", d.interface, " with port", d.port)
 			x = d.stopListening()
 			
 			try:
@@ -94,7 +94,7 @@ class Closer:
 				self.callback(self.session, self.l2k)
 
 def checkCertificates():
-	print "[WebInterface] checking for SSL Certificates"
+	print("[WebInterface] checking for SSL Certificates")
 	srvcert = '%sserver.pem' %resolveFilename(SCOPE_CONFIG) 
 	cacert = '%scacert.pem' %resolveFilename(SCOPE_CONFIG)
 
@@ -106,7 +106,7 @@ def checkCertificates():
 		return True
 		
 def installCertificates(session, callback = None, l2k = None):
-	print "[WebInterface] Installing SSL Certificates to %s" %resolveFilename(SCOPE_CONFIG)
+	print("[WebInterface] Installing SSL Certificates to %s" %resolveFilename(SCOPE_CONFIG))
 	
 	srvcert = '%sserver.pem' %resolveFilename(SCOPE_CONFIG) 
 	cacert = '%scacert.pem' %resolveFilename(SCOPE_CONFIG)	
@@ -167,7 +167,7 @@ def startWebserver(session, l2k):
 	errors = ""
 	
 	if config.plugins.Webinterface.enabled.value is not True:
-		print "[Webinterface] is disabled!"
+		print("[Webinterface] is disabled!")
 	
 	else:
 		# IF SSL is enabled we need to check for the certs first
@@ -175,7 +175,7 @@ def startWebserver(session, l2k):
 		# and get called after Certificates are installed properly
 		if config.plugins.Webinterface.https.enabled.value:
 			if not checkCertificates():
-				print "[Webinterface] Installing Webserver Certificates for SSL encryption"
+				print("[Webinterface] Installing Webserver Certificates for SSL encryption")
 				installCertificates(session, startWebserver, l2k)
 				return
 		# Listen on all Interfaces
@@ -266,7 +266,7 @@ def startServerInstance(session, ipaddress, port, useauth=False, l2k=None, usess
 	else:
 		d = reactor.listenTCP(port, site, interface=ipaddress)
 	running_defered.append(d)		
-	print "[Webinterface] started on %s:%i auth=%s ssl=%s" % (ipaddress, port, useauth, usessl)
+	print("[Webinterface] started on %s:%i auth=%s ssl=%s" % (ipaddress, port, useauth, usessl))
 	return True
 	
 	#except Exception, e:
@@ -296,14 +296,14 @@ class HTTPAuthResource(resource.Resource):
 		#If streamauth is disabled allow all acces from localhost
 		if not config.plugins.Webinterface.streamauth.value:			
 			if( host == "127.0.0.1" or host == "localhost" ):
-				print "[WebInterface.plugin.isAuthenticated] Streaming auth is disabled bypassing authcheck because host is '%s'" %host
+				print("[WebInterface.plugin.isAuthenticated] Streaming auth is disabled bypassing authcheck because host is '%s'" %host)
 				return True
 					
 		# get the Session from the Request
 		sessionNs = request.getSession().sessionNamespaces
 		
 		# if the auth-information has not yet been stored to the session
-		if not sessionNs.has_key('authenticated'):
+		if 'authenticated' not in sessionNs:
 			if request.getUser() != '':
 				sessionNs['authenticated'] = check_passwd(request.getUser(), request.getPassword())
 			else:
@@ -325,7 +325,7 @@ class HTTPAuthResource(resource.Resource):
 			return self.resource.render(request)
 		
 		else:
-			print "[Webinterface.HTTPAuthResource.render] !!! unauthorized !!!"
+			print("[Webinterface.HTTPAuthResource.render] !!! unauthorized !!!")
 			return self.unautorized(request).render(request)
 
 #===============================================================================
@@ -336,7 +336,7 @@ class HTTPAuthResource(resource.Resource):
 			return self.resource.getChildWithDefault(path, request)
 		
 		else:
-			print "[Webinterface.HTTPAuthResource.render] !!! unauthorized !!!"
+			print("[Webinterface.HTTPAuthResource.render] !!! unauthorized !!!")
 			return self.unautorized(request)
 
 #===============================================================================
@@ -398,11 +398,11 @@ def registerBonjourService(protocol, port):
 				
 		service = bonjour.buildService(protocol, port)
 		bonjour.registerService(service, True)
-		print "[WebInterface.registerBonjourService] Service for protocol '%s' with port '%i' registered!" %(protocol, port) 
+		print("[WebInterface.registerBonjourService] Service for protocol '%s' with port '%i' registered!" %(protocol, port)) 
 		return True
 		
-	except ImportError, e:
-		print "[WebInterface.registerBonjourService] %s" %e
+	except ImportError as e:
+		print("[WebInterface.registerBonjourService] %s" %e)
 		return False
 
 def unregisterBonjourService(protocol):	
@@ -410,11 +410,11 @@ def unregisterBonjourService(protocol):
 		from Plugins.Extensions.Bonjour.Bonjour import bonjour
 						
 		bonjour.unregisterService(protocol)
-		print "[WebInterface.unregisterBonjourService] Service for protocol '%s' unregistered!" %(protocol) 
+		print("[WebInterface.unregisterBonjourService] Service for protocol '%s' unregistered!" %(protocol)) 
 		return True
 		
-	except ImportError, e:
-		print "[WebInterface.unregisterBonjourService] %s" %e
+	except ImportError as e:
+		print("[WebInterface.unregisterBonjourService] %s" %e)
 		return False
 	
 def checkBonjour():
@@ -475,11 +475,11 @@ def configCB(result, session):
 		
 	if l2r:	
 		if result:
-			print "[WebIf] config changed"
+			print("[WebIf] config changed")
 			restartWebserver(session, l2k)
 			checkBonjour()
 		else:
-			print "[WebIf] config not changed"
+			print("[WebIf] config not changed")
 
 def Plugins(**kwargs):
 	return [PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=sessionstart),

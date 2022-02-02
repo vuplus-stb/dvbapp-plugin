@@ -27,7 +27,7 @@ class IPKGResource(resource.Resource):
 
 	def buildCmd(self, parms=[]):
 		cmd = [IPKGResource.IPKG_PATH, "ipkg", self.command] + parms
-		print "[IPKG.py] cmd: %s" % cmd
+		print("[IPKG.py] cmd: %s" % cmd)
 		return cmd
 
 	def execCmd(self, request, parms=[]):

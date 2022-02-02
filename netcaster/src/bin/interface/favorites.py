@@ -1,7 +1,7 @@
 from Plugins.Extensions.NETcaster.StreamInterface import StreamInterface
 from Plugins.Extensions.NETcaster.StreamInterface import Stream
 from Plugins.Extensions.NETcaster.plugin import myname
-from ConfigParser import ConfigParser, DuplicateSectionError
+from configparser import ConfigParser, DuplicateSectionError
 
 from Tools.BoundFunction import boundFunction
 
@@ -32,12 +32,12 @@ class Interface(StreamInterface):
         return list
     
     def deleteStream(self):
-        print "favorites deleteStream"
+        print("favorites deleteStream")
         if self.selectedStream is not None:
             SHOUTcasterFavorites().deleteStreamWithName(self.selectedStream.getName())
         self.getList()
     def addStream(self):
-        print "favorites addStream"
+        print("favorites addStream")
         if self.selectedStream is not None:
             SHOUTcasterFavorites().addStream(self.selectedStream)
         #self.getList()
@@ -50,7 +50,7 @@ class SHOUTcasterFavorites:
     def getStreams(self):
         streams=[]
         sections = self.configparser.sections()
-        print sections
+        print(sections)
         for section in sections:
                 stream = self.getStreamByName(section)
                 streams.append(stream)
@@ -61,7 +61,7 @@ class SHOUTcasterFavorites:
         else:
             return False
     def getStreamByName(self,streamname):
-        print "["+myname+"] load "+streamname+" from config"
+        print(("["+myname+"] load "+streamname+" from config"))
         if self.isStream(streamname) is True:
             stream = Stream(
                         streamname,
@@ -75,11 +75,11 @@ class SHOUTcasterFavorites:
             return False
 
     def addStream(self, stream):
-        print "["+myname+"] adding "+stream.getName()+" to config"
+        print(("["+myname+"] adding "+stream.getName()+" to config"))
         try:
             self.configparser.add_section(stream.getName())
-        except DuplicateSectionError,e:
-            print "["+myname+"] error while adding stream to config:",e
+        except DuplicateSectionError as e:
+            print(("["+myname+"] error while adding stream to config:",e))
             return False,e
         else:
             # XXX: I hope this still works properly if we make a optimistic
@@ -108,7 +108,7 @@ class SHOUTcasterFavorites:
         self.writeConfig()
         
     def writeConfig(self):
-        print "["+myname+"] writing config to "+self.configfile
+        print(("["+myname+"] writing config to "+self.configfile))
         
         fp = open(self.configfile,"w")
         self.configparser.write(fp)

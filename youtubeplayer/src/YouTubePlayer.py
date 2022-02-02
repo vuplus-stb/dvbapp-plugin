@@ -21,7 +21,7 @@
 from Plugins.Extensions.VlcPlayer.VlcPlayer import VlcPlayer
 from Components.ActionMap import ActionMap
 
-from YouTubeContextMenu import YouTubeEntryContextMenu, YouTubeEntryContextMenuList
+from .YouTubeContextMenu import YouTubeEntryContextMenu, YouTubeEntryContextMenuList
 
 
 class YouTubePlayer(VlcPlayer):

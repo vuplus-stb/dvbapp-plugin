@@ -26,7 +26,7 @@ from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Label import Label
 from enigma import RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, gFont, eListbox,ePoint, eListboxPythonMultiContent
 # merlin mp3 player
-import merlinmp3player
+from . import merlinmp3player
 ENIGMA_MERLINPLAYER_ID = 0x1014
 from Components.FileList import FileList
 from enigma import eServiceReference, eTimer
@@ -40,7 +40,7 @@ from Screens.MessageBox import MessageBox
 from Components.GUIComponent import GUIComponent
 from enigma import ePicLoad
 from xml.etree.cElementTree import fromstring as cet_fromstring
-from urllib import quote
+from urllib.parse import quote
 from Components.ScrollLabel import ScrollLabel
 from Components.AVSwitch import AVSwitch
 from Tools.Directories import fileExists, resolveFilename, SCOPE_CURRENT_SKIN
@@ -351,11 +351,11 @@ def OpenDatabase():
 		try:
 			connection = sqlite.connect(connectstring)
 			if not os_access(connectstring, os_W_OK):
-				print "[MerlinMusicPlayer] Error: database file needs to be writable, can not open %s for writing..." % connectstring
+				print(("[MerlinMusicPlayer] Error: database file needs to be writable, can not open %s for writing..." % connectstring))
 				connection.close()
 				return None
 		except:
-			print "[MerlinMusicPlayer] unable to open database file: %s" % connectstring
+			print(("[MerlinMusicPlayer] unable to open database file: %s" % connectstring))
 			return None
 		if not db_exists :
 				connection.execute('CREATE TABLE IF NOT EXISTS Songs (song_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, filename TEXT NOT NULL UNIQUE, title TEXT, artist_id INTEGER, album_id INTEGER, genre_id INTEGER, tracknumber INTEGER, bitrate INTEGER, length TEXT, track TEXT, date TEXT, lyrics TEXT);')
@@ -508,7 +508,7 @@ class MerlinMusicPlayerScreenSaver(Screen):
 		self.summaries.setText(text,line)
 
 	def updateCover(self, filename = None, modus = 0):
-		print "[MerlinMusicPlayerScreenSaver] updating coverart with filename = %s and modus = %d" % (filename, modus)
+		print(("[MerlinMusicPlayerScreenSaver] updating coverart with filename = %s and modus = %d" % (filename, modus)))
 		if modus == 0:
 			if filename:
 				self["coverArt"].showCoverFromFile(filename)
@@ -1231,22 +1231,22 @@ class MerlinMusicPlayerScreen(Screen, InfoBarBase, InfoBarSeek, InfoBarNotificat
 				self.currentGoogleCoverFile = filename
 				filename = self.googleDownloadDir + parts[-1]
 				if os_path.exists(filename):
-					print "[MerlinMusicPlayer] using cover from %s " % filename
+					print(("[MerlinMusicPlayer] using cover from %s " % filename))
 					self["coverArt"].showCoverFromFile(filename)
 					if self.screenSaverScreen:
 						self.screenSaverScreen.updateCover(filename = filename, modus = 4)
 				else:
-					print "[MerlinMusicPlayer] downloading cover from %s " % url
+					print(("[MerlinMusicPlayer] downloading cover from %s " % url))
 					downloadPage(url , self.googleDownloadDir + parts[-1]).addCallback(boundFunction(self.coverDownloadFinished, filename)).addErrback(self.coverDownloadFailed)
 
 	def coverDownloadFailed(self,result):
-        	print "[MerlinMusicPlayer] cover download failed: %s " % result
+        	print(("[MerlinMusicPlayer] cover download failed: %s " % result))
 		self["coverArt"].showDefaultCover()
 		if self.screenSaverScreen:
 			self.screenSaverScreen.updateCover(modus = 1)
 
 	def coverDownloadFinished(self,filename, result):
-		print "[MerlinMusicPlayer] cover download finished"
+		print("[MerlinMusicPlayer] cover download finished")
 		self["coverArt"].showCoverFromFile(filename)
 		if self.screenSaverScreen:
 			self.screenSaverScreen.updateCover(filename = filename, modus = 4)
@@ -1254,13 +1254,13 @@ class MerlinMusicPlayerScreen(Screen, InfoBarBase, InfoBarSeek, InfoBarNotificat
 	def __evAudioDecodeError(self):
 		currPlay = self.session.nav.getCurrentService()
 		sAudioType = currPlay.info().getInfoString(iServiceInformation.sUser+10)
-		print "[MerlinMusicPlayer] audio-codec %s can't be decoded by hardware" % (sAudioType)
+		print(("[MerlinMusicPlayer] audio-codec %s can't be decoded by hardware" % (sAudioType)))
 		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sAudioType, type = MessageBox.TYPE_INFO,timeout = 20 )
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
 		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[MerlinMusicPlayer]" , message
+		print(("[MerlinMusicPlayer]" , message))
 		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 20 )
 
 	def doEofInternal(self, playing):
@@ -1505,7 +1505,7 @@ class MerlinMusicPlayerLyrics(Screen):
 			self["lyric_text"].setText("No lyrics found")
   
 	def getLyricsFromID3Tag(self,tag):
-		for frame in tag.values():
+		for frame in list(tag.values()):
 			if frame.FrameID == "USLT":
 				return frame.text
 		return "No lyrics found in id3-tag"
@@ -2697,7 +2697,7 @@ class MerlinMediaPixmap(Pixmap):
 		if self.coverArtFileName != new_coverArtFileName:
 			if new_coverArtFileName:
 				self.coverArtFileName = new_coverArtFileName
-				print "[MerlinMusicPlayer] using cover from %s " % self.coverArtFileName
+				print(("[MerlinMusicPlayer] using cover from %s " % self.coverArtFileName))
 				self.picload.startDecode(self.coverArtFileName)
 				back = True
 		else:
@@ -2714,7 +2714,7 @@ class MerlinMediaPixmap(Pixmap):
 		self.picload.startDecode(self.coverArtFileName)
 
 	def embeddedCoverArt(self):
-		print "[embeddedCoverArt] found"
+		print("[embeddedCoverArt] found")
 		self.coverArtFileName = "/tmp/.id3coverart"
 		self.picload.startDecode(self.coverArtFileName)
 
@@ -3333,14 +3333,14 @@ class MerlinMusicPlayerFileList(Screen):
 		return MerlinMusicPlayerLCDScreenText
 
 def main(session,**kwargs):
-	if kwargs.has_key("servicelist"):
+	if "servicelist" in kwargs:
 		servicelist = kwargs["servicelist"]
 	else:
 		servicelist = None
 	session.open(iDreamMerlin, servicelist)
 
 def merlinmusicplayerfilelist(session,**kwargs):
-	if kwargs.has_key("servicelist"):
+	if "servicelist" in kwargs:
 		servicelist = kwargs["servicelist"]
 	else:
 		servicelist = None

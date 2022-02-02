@@ -23,12 +23,12 @@ from zope.interface import implements
 import email, re, os
 from email.header import decode_header
 import time
-from TagStrip import strip_readable
-from protocol import createFactory
+from .TagStrip import strip_readable
+from .protocol import createFactory
 
 from . import _, initLog, debug, scaleH, scaleV, DESKTOP_WIDTH, DESKTOP_HEIGHT #@UnresolvedImport # pylint: disable-msg=F0401
 mailAccounts = [] # contains all EmailAccount objects
-from EmailConfig import EmailConfigOptions, EmailConfigAccount
+from .EmailConfig import EmailConfigOptions, EmailConfigAccount
 
 config.plugins.emailimap = ConfigSubsection()
 config.plugins.emailimap.showDeleted = ConfigEnableDisable(default=False)
@@ -480,7 +480,7 @@ class EmailAttachment:
 			fp = open(folder+"/"+self.getFilename(),"wb")
 			fp.write(self.data)
 			fp.close()
-		except Exception, e:
+		except Exception as e:
 			debug("[EmailAttachment] save %s" %str(e))
 			return False
 		return True
@@ -560,7 +560,7 @@ class CheckMail:
 			debug('[CheckMail] %s: _filterNewUnseen: init' %(self._name))
 			# Notifications.AddNotification(MessageBox, str(len(newUnseenList)) + ' ' + _("unread messages in mailbox %s") %self._name, type=MessageBox.TYPE_INFO, timeout=config.plugins.emailimap.timeout.value)
 		else:
-			newMessages = filter(lambda x: x not in self._unseenList, newUnseenList)
+			newMessages = [x for x in newUnseenList if x not in self._unseenList]
 			if newMessages:
 				debug("[CheckMail] %s: _filterNewUnseen: new message(s): %s" %(self._name, repr(newMessages)))
 				# construct MessageSet from list of message numbers
@@ -769,7 +769,7 @@ class EmailAccount():
 				self._proto.fetchFlags('%i:%i'%(rangeToFetch[0], rangeToFetch[1])	#'1:*'
 						   ).addCallback(self._onFlagsList, callback, rangeToFetch)
 
-			except imap4.IllegalServerResponse, e:
+			except imap4.IllegalServerResponse as e:
 				debug("[EmailAccount] _onExamine exception: " + str(e))
 				callback([], [])
 
@@ -887,9 +887,9 @@ class EmailAccount():
 		try:
 			failure.trap(imap4.NoSupportedAuthentication)
 			self._doLoginInsecure()
-		except Exception, e:
+		except Exception as e:
 			debug("[EmailAccount] %s: _onAuthenticationFailed: %s" %(self._name, e.message))
-			print e, e.message
+			print((e, e.message))
 
 	def _doLoginInsecure(self):
 		debug("[EmailAccount] %s: _doLoginInsecure" %(self._name))
@@ -920,7 +920,7 @@ class EmailAccount():
 		# debug("[EmailAccount] %s: onMailboxList:\n%s" %(self._name, str(mylist)))
 		mylist.sort()
 		try:
-			self.inboxPos = map(lambda x: x.lower(), mylist).index('inbox')+1
+			self.inboxPos = [x.lower() for x in mylist].index('inbox')+1
 		except ValueError:
 			debug("[EmailAccount] onMailboxList: no inbox?!?!")
 			mylist = ['INBOX']

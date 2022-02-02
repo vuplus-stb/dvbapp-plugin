@@ -181,7 +181,7 @@ class RSSSetup(ConfigListScreen, Screen):
 		ConfigListScreen.keySave(self)
 
 	def abort(self):
-		print "[SimpleRSS] Closing Setup Dialog"
+		print("[SimpleRSS] Closing Setup Dialog")
 		simpleRSS = config.plugins.simpleRSS
 
 		# Remove Notifier

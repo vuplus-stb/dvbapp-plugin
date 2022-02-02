@@ -9,7 +9,7 @@ $Modified: sreichholf
 '''
 
 import re, sys, os
-import htmlentitydefs
+import html.entities
 from xml.dom.minidom import parse
 from twisted.web.client import getPage #@UnresolvedImport
 from twisted.internet import reactor #@UnresolvedImport
@@ -28,9 +28,9 @@ def html2unicode(in_html, charset):
 	for x in entities:
 		# debug("[Callhtml2utf8] mask: found %s" %repr(x.group(2)))
 		entitydict[x.group(1)] = x.group(2)
-	for key, name in entitydict.items():
+	for key, name in list(entitydict.items()):
 		try:
-			entitydict[key] = htmlentitydefs.name2codepoint[str(name)]
+			entitydict[key] = html.entities.name2codepoint[str(name)]
 		except KeyError:
 			debug("[Callhtml2utf8] KeyError " + key + "/" + name)
 
@@ -39,12 +39,12 @@ def html2unicode(in_html, charset):
 	for x in entities:
 		# debug("[Callhtml2utf8] number: found %s" %x.group(1))
 		entitydict[x.group(1)] = x.group(2)
-	for key, codepoint in entitydict.items():
+	for key, codepoint in list(entitydict.items()):
 		try:
-			uml = unichr(int(codepoint))
+			uml = chr(int(codepoint))
 			debug("[nrzuname] html2utf8: replace %s with %s in %s" %(repr(key), repr(uml), repr(in_html[0:20]+'...')))
 			in_html = in_html.replace(key, uml)
-		except ValueError, e:
+		except ValueError as e:
 			debug("[nrzuname] html2utf8: ValueError " + repr(key) + ":" + repr(codepoint) + " (" + str(e) + ")")
 	return in_html
 
@@ -91,7 +91,7 @@ def out(number, caller):
 	print(name)
 
 def simpleout(number, caller): #@UnusedVariable # pylint: disable-msg=W0613
-	print caller
+	print(caller)
 
 try:
 	from Tools.Directories import resolveFilename, SCOPE_PLUGINS
@@ -142,18 +142,18 @@ class ReverseLookupAndNotify:
 			return
 
 		if self.number[:2] == "00":
-			if countries.has_key(self.number[:3]):	 #	e.g. USA
+			if self.number[:3] in countries:	 #	e.g. USA
 				self.countrycode = self.number[:3]
-			elif countries.has_key(self.number[:4]):
+			elif self.number[:4] in countries:
 				self.countrycode = self.number[:4]
-			elif countries.has_key(self.number[:5]):
+			elif self.number[:5] in countries:
 				self.countrycode = self.number[:5]
 			else:
 				debug("[ReverseLookupAndNotify] Country cannot be reverse handled")
 				self.notifyAndReset()
 				return
 
-		if countries.has_key(self.countrycode):
+		if self.countrycode in countries:
 			debug("[ReverseLookupAndNotify] Found website for reverse lookup")
 			self.websites = countries[self.countrycode]
 			self.nextWebsiteNo = 1

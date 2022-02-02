@@ -1,7 +1,7 @@
 # Plugins Config
 from xml.etree.cElementTree import parse as cet_parse
 from os import path as os_path
-from AutoTimerConfiguration import parseConfig, buildConfig
+from .AutoTimerConfiguration import parseConfig, buildConfig
 
 # Navigation (RecordTimer)
 import NavigationInstance
@@ -21,7 +21,7 @@ from enigma import eEPGCache, eServiceReference
 from Components.config import config
 
 # AutoTimer Component
-from AutoTimerComponent import preferredAutoTimerComponent
+from .AutoTimerComponent import preferredAutoTimerComponent
 
 XML_CONFIG = "/etc/enigma2/autotimer.xml"
 
@@ -72,13 +72,13 @@ class AutoTimer:
 	def readXml(self):
 		# Abort if no config found
 		if not os_path.exists(XML_CONFIG):
-			print "[AutoTimer] No configuration file present"
+			print("[AutoTimer] No configuration file present")
 			return
 
 		# Parse if mtime differs from whats saved
 		mtime = os_path.getmtime(XML_CONFIG)
 		if mtime == self.configMtime:
-			print "[AutoTimer] No changes in configuration, won't parse"
+			print("[AutoTimer] No changes in configuration, won't parse")
 			return
 
 		# Save current mtime
@@ -153,7 +153,7 @@ class AutoTimer:
 
 	def parseEPG(self, simulateOnly = False):
 		if NavigationInstance.instance is None:
-			print "[AutoTimer] Navigation is not available, can't parse EPG"
+			print("[AutoTimer] Navigation is not available, can't parse EPG")
 			return (0, 0, 0, [], [])
 
 		total = 0
@@ -189,7 +189,7 @@ class AutoTimer:
 
 				evt = epgcache.lookupEventId(eserviceref, eit)
 				if not evt:
-					print "[AutoTimer] Could not create Event!"
+					print("[AutoTimer] Could not create Event!")
 					continue
 
 				# Try to determine real service (we always choose the last one)
@@ -255,17 +255,17 @@ class AutoTimer:
 
 						# Abort if we don't want to modify timers or timer is repeated
 						if config.plugins.autotimer.refresh.value == "none" or rtimer.repeated:
-							print "[AutoTimer] Won't modify existing timer because either no modification allowed or repeated timer"
+							print("[AutoTimer] Won't modify existing timer because either no modification allowed or repeated timer")
 							break
 
 						if hasattr(rtimer, "isAutoTimer"):
-								print "[AutoTimer] Modifying existing AutoTimer!"
+								print("[AutoTimer] Modifying existing AutoTimer!")
 						else:
 							if config.plugins.autotimer.refresh.value != "all":
-								print "[AutoTimer] Won't modify existing timer because it's no timer set by us"
+								print("[AutoTimer] Won't modify existing timer because it's no timer set by us")
 								break
 
-							print "[AutoTimer] Warning, we're messing with a timer which might not have been set by us"
+							print("[AutoTimer] Warning, we're messing with a timer which might not have been set by us")
 
 						newEntry = rtimer
 						modified += 1
@@ -280,7 +280,7 @@ class AutoTimer:
 						break
 					elif timer.avoidDuplicateDescription == 1 and not rtimer.disabled and rtimer.name == name and rtimer.description == description:
 						oldExists = True
-						print "[AutoTimer] We found a timer with same description, skipping event"
+						print("[AutoTimer] We found a timer with same description, skipping event")
 						break
 
 				# We found no timer we want to edit
@@ -293,18 +293,18 @@ class AutoTimer:
 					if timer.avoidDuplicateDescription == 2:
 						# I thinks thats the fastest way to do this, though it's a little ugly
 						try:
-							for list in recorddict.values():
+							for list in list(recorddict.values()):
 								for rtimer in list:
 									if not rtimer.disabled and rtimer.name == name and rtimer.description == description:
 										raise AutoTimerIgnoreTimerException("We found a timer with same description, skipping event")
-						except AutoTimerIgnoreTimerException, etite:
-							print etite
+						except AutoTimerIgnoreTimerException as etite:
+							print(etite)
 							continue
 
 					if timer.checkCounter(timestamp):
 						continue
 
-					print "[AutoTimer] Adding an event."
+					print("[AutoTimer] Adding an event.")
 					newEntry = RecordTimerEntry(ServiceReference(serviceref), begin, end, name, description, eit)
 
 					# Mark this entry as AutoTimer (only AutoTimers will have this Attribute set)

@@ -9,7 +9,7 @@ class ParentControl(Source):
 		self.session = session
 
 	def command(self):
-		print "ParentControl was called"
+		print("ParentControl was called")
 
 		if config.ParentalControl.configured.value:
 			parentalControl.open()
@@ -22,7 +22,7 @@ class ParentControl(Source):
 		else:
 			list = []
 
-		print "list", list
+		print("list", list)
 		return list
 
 	list = property(command)

@@ -1,6 +1,6 @@
 # mp4porn plugin by AliAbdul
-from Plugin import Movie, Plugin
-import re, urllib2
+from .Plugin import Movie, Plugin
+import re, urllib.request, urllib.error, urllib.parse
 
 ##################################################
 
@@ -10,7 +10,7 @@ class MP4PornMovie(Movie):
 
 	def getVideoUrl(self):
 		try:
-			data = urllib2.urlopen(self.url).read()
+			data = urllib.request.urlopen(self.url).read()
 		except:
 			data = ""
 		reonecat = re.compile(r'\| <a href="(.+?).m4v"')
@@ -45,7 +45,7 @@ class MP4Porn(Plugin):
 
 	def getPageError(self, error=None):
 		if error and self.currPage == 1:
-			print "[%s] Error: %s" % (self.name, error)
+			print(("[%s] Error: %s" % (self.name, error)))
 		else:
 			self.moreEntries = False
 

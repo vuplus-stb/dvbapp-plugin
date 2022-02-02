@@ -1,6 +1,6 @@
 from twisted.web import http, resource
-from EPGRefresh import epgrefresh
-from EPGRefreshService import EPGRefreshService
+from .EPGRefresh import epgrefresh
+from .EPGRefreshService import EPGRefreshService
 from enigma import eServiceReference
 from Components.config import config
 
@@ -48,7 +48,7 @@ class EPGRefreshAddRemoveServiceResource(resource.Resource):
 			duration = req.args.get("duration", None)
 			try:
 				duration = duration and int(duration)
-			except ValueError, ve:
+			except ValueError as ve:
 				output = 'invalid value for "duration": ' + str(duration)
 			else:
 				epgservice = EPGRefreshService(sref, duration)
@@ -119,7 +119,7 @@ class EPGRefreshListServicesResource(resource.Resource):
 
 class EPGRefreshChangeSettingsResource(resource.Resource):
 	def render(self, req):
-		for key, value in req.args.iteritems():
+		for key, value in list(req.args.items()):
 			value = value[0]
 			if key == "enabled":
 				config.plugins.epgrefresh.enabled.value = True if value == "true" else False

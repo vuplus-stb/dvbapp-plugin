@@ -1,10 +1,10 @@
 from twisted.web import http, resource
-from AutoTimer import AutoTimer
+from .AutoTimer import AutoTimer
 from . import _
 
 class AutoTimerBaseResource(resource.Resource):
 	def getAutoTimerInstance(self):
-		from plugin import autotimer
+		from .plugin import autotimer
 		if autotimer is None:
 			self._remove = True
 			return AutoTimer()

@@ -71,7 +71,7 @@ from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 try:
 	_ = gettext.translation('elektro', resolveFilename(SCOPE_PLUGINS, "Extensions/Elektro/locale"), [config.osd.language.getText()]).gettext
 except IOError:
-	print "[Elektro] Locale not found!"
+	print("[Elektro] Locale not found!")
 	pass
 
 #############
@@ -126,7 +126,7 @@ ElektroWakeUpTime = -1
 
 def autostart(reason, **kwargs):
 	global session  
-	if reason == 0 and kwargs.has_key("session"):
+	if reason == 0 and "session" in kwargs:
 		session = kwargs["session"]
 		session.open(DoElektro)
 
@@ -138,14 +138,14 @@ def getNextWakeup():
 		return ElektroWakeUpTime;
 	
 	nextTimer = session.nav.RecordTimer.getNextRecordingTime()
-	print "[Elektro] Now: " + strftime("%a:%H:%M:%S",  gmtime(time()))
+	print(("[Elektro] Now: " + strftime("%a:%H:%M:%S",  gmtime(time()))))
 	if (nextTimer < 1) or (nextTimer > ElektroWakeUpTime):
-		print "[Elektro] will wake up " + strftime("%a:%H:%M:%S",  gmtime(ElektroWakeUpTime))
+		print(("[Elektro] will wake up " + strftime("%a:%H:%M:%S",  gmtime(ElektroWakeUpTime))))
 		return ElektroWakeUpTime
 	
 	#We have to make sure, that the Box will wake up because of us
 	# and not because of the timer
-	print "[Elektro] will wake up due to the next timer" + strftime("%a:%H:%M:%S",  gmtime(nextTimer))
+	print(("[Elektro] will wake up due to the next timer" + strftime("%a:%H:%M:%S",  gmtime(nextTimer))))
 	return nextTimer - 1
 	   
 	
@@ -177,7 +177,7 @@ def main(session,**kwargs):
 	try:	
 	 	session.open(Elektro)
 	except:
-		print "[Elektro] Pluginexecution failed"
+		print("[Elektro] Pluginexecution failed")
 
 class Elektro(ConfigListScreen,Screen):
 	skin = """
@@ -253,7 +253,7 @@ class DoElektro(Screen):
 	def __init__(self,session):
 		Screen.__init__(self,session)
 		
-		print "[Elektro] Starting up Version " + elektro_pluginversion
+		print(("[Elektro] Starting up Version " + elektro_pluginversion))
 		
 		self.session = session
 		
@@ -301,13 +301,13 @@ class DoElektro(Screen):
 			self.TimerStandby = eTimer()
 			self.TimerStandby.callback.append(self.CheckStandby)
 			self.TimerStandby.startLongTimer(elektrosleeptime)
-			print "[Elektro] Set up standby timer"
+			print("[Elektro] Set up standby timer")
 
 		self.TimerSleep = eTimer()
 		self.TimerSleep.callback.append(self.CheckElektro)
 		self.TimerSleep.startLongTimer(elektrostarttime)
-		print "[Elektro] Set up sleep timer"
-		print "[Elektro] Translation test: " + _("Standby on boot")
+		print("[Elektro] Set up sleep timer")
+		print(("[Elektro] Translation test: " + _("Standby on boot")))
 		
 	def clkToTime(self, clock):
 		return ( (clock.value[0]) * 60 + (int)(clock.value[1]) )  * 60
@@ -328,13 +328,13 @@ class DoElektro(Screen):
 		
 	
 	def CheckStandby(self):
-		print "[Elektro] Showing Standby Sceen "
+		print("[Elektro] Showing Standby Sceen ")
 		try:
 			self.session.openWithCallback(self.DoElektroStandby,MessageBox,_("Go to Standby now?"),type = MessageBox.TYPE_YESNO,
 					timeout = config.plugins.elektro.standbyOnBootTimeout.value)		
 		except:
 			# Couldn't be shown. Restart timer.
-			print "[Elektro] Failed Showing Standby Sceen "
+			print("[Elektro] Failed Showing Standby Sceen ")
 			self.TimerStandby.startLongTimer(elektrostarttime)
 
 
@@ -401,42 +401,42 @@ class DoElektro(Screen):
 		time_s = self.getTime()
 		ltime = localtime()
 		
-		print "[Elektro] Testtime; " + self.getPrintTime(2 * 60 * 60)
+		print(("[Elektro] Testtime; " + self.getPrintTime(2 * 60 * 60)))
 		
 		#Which day is it? The next day starts at nextday
-		print "[Elektro] wday 1: " + str(ltime.tm_wday)
+		print(("[Elektro] wday 1: " + str(ltime.tm_wday)))
 		if time_s < self.clkToTime(config.plugins.elektro.nextday):
 			day = (ltime.tm_wday - 1) % 7
 		else:
 			day = ltime.tm_wday
 			
-		print "[Elektro] wday 2: " + str(day)
+		print(("[Elektro] wday 2: " + str(day)))
 		
 		#Let's get the day
 		wakeuptime = self.clkToTime(config.plugins.elektro.wakeup[day])
 		sleeptime = self.clkToTime(config.plugins.elektro.sleep[day])
-		print "[Elektro] Current time: " + self.getPrintTime(time_s)
-		print "[Elektro] Wakeup time: " + self.getPrintTime(wakeuptime)
-		print "[Elektro] Sleep time: " + self.getPrintTime(sleeptime)
+		print(("[Elektro] Current time: " + self.getPrintTime(time_s)))
+		print(("[Elektro] Wakeup time: " + self.getPrintTime(wakeuptime)))
+		print(("[Elektro] Sleep time: " + self.getPrintTime(sleeptime)))
 		
 		#convert into relative Times
 		time_s = self.getReltime(time_s)
 		wakeuptime  = self.getReltime(wakeuptime)
 		sleeptime = self.getReltime(sleeptime)
 		
-		print "[Elektro] Current Rel-time: " + self.getPrintTime(time_s)
-		print "[Elektro] Wakeup Rel-time: " + self.getPrintTime(wakeuptime)
-		print "[Elektro] Sleep Rel-time: " + self.getPrintTime(sleeptime)
+		print(("[Elektro] Current Rel-time: " + self.getPrintTime(time_s)))
+		print(("[Elektro] Wakeup Rel-time: " + self.getPrintTime(wakeuptime)))
+		print(("[Elektro] Sleep Rel-time: " + self.getPrintTime(sleeptime)))
 		
 		
 		#let's see if we should be sleeping
 		trysleep = False
 		if time_s < (wakeuptime - elektroShutdownThreshold): # Wakeup is in the future -> sleep!
 			trysleep = True
-			print "[Elektro] Wakeup!" + str(time_s) + " < " + str(wakeuptime)
+			print(("[Elektro] Wakeup!" + str(time_s) + " < " + str(wakeuptime)))
 		if sleeptime < time_s : #Sleep is in the past -> sleep!
 			trysleep = True
-			print "[Elektro] Sleep: " + str(sleeptime) + " < " + str(time_s)
+			print(("[Elektro] Sleep: " + str(sleeptime) + " < " + str(time_s)))
 		
 		#We are not tying to go to sleep anymore -> maybe go to sleep again the next time
 		if trysleep == False:

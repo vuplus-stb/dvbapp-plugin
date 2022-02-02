@@ -28,13 +28,13 @@ from Components.Sources.StaticText import StaticText
 from xml.etree.cElementTree import fromstring as cet_fromstring
 from twisted.internet import defer
 from twisted.web.client import getPage, downloadPage
-from urllib import quote
+from urllib.parse import quote
 from Components.Pixmap import Pixmap
 from enigma import ePicLoad
 from os import path as os_path, mkdir as os_mkdir
 from Components.AVSwitch import AVSwitch
 from Components.config import ConfigSubsection, ConfigSubList, ConfigInteger, config
-from setup import initConfig, WeatherPluginEntriesListConfigScreen
+from .setup import initConfig, WeatherPluginEntriesListConfigScreen
 
 config.plugins.WeatherPlugin = ConfigSubsection()
 config.plugins.WeatherPlugin.entriescount =  ConfigInteger(0)

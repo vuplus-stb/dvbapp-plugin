@@ -11,7 +11,7 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 
-from RSSList import RSSFeedList
+from .RSSList import RSSFeedList
 
 class RSSSummary(Screen):
 	skin = """
@@ -132,7 +132,7 @@ class RSSEntryView(RSSBaseView):
 			"yellow": self.selectEnclosure,
 			"up": self.up,
 			"down": self.down,
-			"right": self.next,
+			"right": self.__next__,
 			"left": self.previous,
 			"nextBouquet": self.nextFeed,
 			"prevBouquet": self.previousFeed,
@@ -161,7 +161,7 @@ class RSSEntryView(RSSBaseView):
 	def down(self):
 		self["content"].pageDown()
 
-	def next(self):
+	def __next__(self):
 		if self.parent is not None:
 			(self.data, self.cur_idx, self.entries) = self.parent.nextEntry()
 			self.setContent()
@@ -174,7 +174,7 @@ class RSSEntryView(RSSBaseView):
 	def nextFeed(self):
 		# Show next Feed
 		if self.parent is not None:
-			result = self.parent.next()
+			result = next(self.parent)
 			self.feedTitle = result[0]
 			self.entries = len(result[1])
 			if self.entries:
@@ -252,7 +252,7 @@ class RSSFeedView(RSSBaseView):
 			{
 				"ok": self.showCurrentEntry,
 				"cancel": self.close,
-				"nextBouquet": self.next,
+				"nextBouquet": self.__next__,
 				"prevBouquet": self.previous,
 				"menu": self.menu,
 				"yellow": self.selectEnclosure,
@@ -295,7 +295,7 @@ class RSSFeedView(RSSBaseView):
 		self.rssPoller.removeCallback(self.pollCallback)
 
 	def pollCallback(self, id = None):
-		print "[SimpleRSS] SimpleRSSFeed called back"
+		print("[SimpleRSS] SimpleRSSFeed called back")
 
 		if id is None or id+1 == self.id:
 			self["content"].updateList(self.feed.history)
@@ -336,7 +336,7 @@ class RSSFeedView(RSSBaseView):
 		self["content"].selectPrevious()
 		return (self["content"].current, self["content"].index, len(self.feed.history))
 
-	def next(self):
+	def __next__(self):
 		# Show next Feed
 		if self.parent is not None:
 			(self.feed, self.id) = self.parent.nextFeed()
@@ -429,7 +429,7 @@ class RSSOverview(RSSBaseView):
 		self.feeds.extend([(feed,) for feed in self.rssPoller.feeds])
 
 	def pollCallback(self, id = None):
-		print "[SimpleRSS] SimpleRSS called back"
+		print("[SimpleRSS] SimpleRSS called back")
 		self.updateInfo()
 		self["content"].invalidate()
 
@@ -475,7 +475,7 @@ class RSSOverview(RSSBaseView):
 				if cur_idx > 0:
 					self.singleUpdate(cur_idx-1)
 			elif result[1] == "setup":
-				from RSSSetup import RSSSetup
+				from .RSSSetup import RSSSetup
 
 				self.session.openWithCallback(
 					self.refresh,

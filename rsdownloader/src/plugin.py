@@ -14,7 +14,7 @@ from Components.Language import language
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
 from Components.ScrollLabel import ScrollLabel
-from container.decrypt import decrypt
+from .container.decrypt import decrypt
 from enigma import eListboxPythonMultiContent, eTimer, gFont, RT_HALIGN_CENTER, RT_HALIGN_RIGHT
 from os import environ, listdir, remove, system
 from Plugins.Plugin import PluginDescriptor
@@ -30,10 +30,10 @@ from Tools.LoadPixmap import LoadPixmap
 from twisted.internet import reactor
 from twisted.python import failure
 from twisted.web.client import getPage
-from urllib2 import Request
-from urlparse import urlparse, urlunparse
+from urllib.request import Request
+from urllib.parse import urlparse, urlunparse
 from xml.etree.cElementTree import parse
-import gettext, re, socket, sys, urllib, urllib2
+import gettext, re, socket, sys, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse
 
 ##############################################################################
 
@@ -131,7 +131,7 @@ class ProgressDownload:
 			basicAuth = encodestring("%s:%s"%(username, password))
 			authHeader = "Basic " + basicAuth.strip()
 			AuthHeaders = {"Authorization": authHeader}
-			if kwargs.has_key("headers"):
+			if "headers" in kwargs:
 				kwargs["headers"].update(AuthHeaders)
 			else:
 				kwargs["headers"] = AuthHeaders
@@ -151,14 +151,14 @@ class ProgressDownload:
 
 def get(url):
 	try:
-		data = urllib2.urlopen(url)
+		data = urllib.request.urlopen(url)
 		return data.read()
 	except:
 		return ""
    
 def post(url, data):
 	try:
-		return urllib2.urlopen(url, data).read()
+		return urllib.request.urlopen(url, data).read()
 	except:
 		return ""
 
@@ -341,8 +341,8 @@ class RSDownload:
 			if downloadLink:
 				self.status = _("Downloading")
 				writeLog("Downloading video: %s"%downloadLink)
-				req = urllib2.Request(downloadLink)
-				url_handle = urllib2.urlopen(req)
+				req = urllib.request.Request(downloadLink)
+				url_handle = urllib.request.urlopen(req)
 				headers = url_handle.info()
 				if headers.getheader("content-type") == "video/mp4":
 					ext = "mp4"
@@ -459,7 +459,7 @@ class RSDownload:
 		watch_url = "http://www.youtube.com/watch?v="+video_id
 		watchrequest = Request(watch_url, None, std_headers)
 		try:
-			watchvideopage = urllib2.urlopen(watchrequest).read()
+			watchvideopage = urllib.request.urlopen(watchrequest).read()
 		except:
 			watchvideopage = ""
 		if "isHDAvailable = true" in watchvideopage:
@@ -467,12 +467,12 @@ class RSDownload:
 		info_url = 'http://www.youtube.com/get_video_info?&video_id=%s&el=detailpage&ps=default&eurl=&gl=US&hl=en'%video_id
 		inforequest = Request(info_url, None, std_headers)
 		try:
-			infopage = urllib2.urlopen(inforequest).read()
+			infopage = urllib.request.urlopen(inforequest).read()
 		except:
 			infopage = ""
 		mobj = re.search(r'(?m)&token=([^&]+)(?:&|$)', infopage)
 		if mobj:
-			token = urllib.unquote(mobj.group(1))
+			token = urllib.parse.unquote(mobj.group(1))
 			myurl = 'http://www.youtube.com/get_video?video_id=%s&t=%s&eurl=&el=detailpage&ps=default&gl=US&hl=en'%(video_id, token)
 			if isHDAvailable is True:
 				mrl = '%s&fmt=%s'%(myurl, '22')
@@ -1079,7 +1079,7 @@ class UnrarEntry:
 			f.write(result)
 			f.close()
 		except:
-			print "[RS Downloader] Result of unrar:", result
+			print(("[RS Downloader] Result of unrar:", result))
 		self.finishCallback(self.name)
 
 	def allDownloaded(self):
@@ -1167,7 +1167,7 @@ class Unrar:
 
 	def decode_charset(self, str, charset):
 		try:
-			uni = unicode(str, charset, 'strict')
+			uni = str(str, charset, 'strict')
 		except:
 			uni = str
 		return uni

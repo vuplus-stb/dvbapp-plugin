@@ -24,7 +24,7 @@ from enigma import eListboxPythonMultiContent, \
 from time import localtime
 
 from Tools.LoadPixmap import LoadPixmap
-import PartnerboxFunctions as partnerboxfunctions
+from . import PartnerboxFunctions as partnerboxfunctions
 
 baseEPGList__init__ = None
 basebuildSingleEntry = None

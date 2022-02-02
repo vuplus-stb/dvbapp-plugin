@@ -19,7 +19,7 @@ from Tools.BoundFunction import boundFunction
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 from Tools.LoadPixmap import LoadPixmap
 from twisted.web.client import downloadPage, getPage
-import re, urllib2
+import re, urllib.request, urllib.error, urllib.parse
 
 ###################################################
 
@@ -146,7 +146,7 @@ def getMovies(html):
 
 def getMovieUrls(url):
 	try:
-		f = urllib2.urlopen(url)
+		f = urllib.request.urlopen(url)
 		html = f.read()
 		f.close()
 	except:
@@ -320,7 +320,7 @@ class ARDMediathek(Screen):
 		getPage(url).addCallback(self.gotPage).addErrback(self.error)
 
 	def error(self, err=""):
-		print "[ARD Mediathek] Error:", err
+		print(("[ARD Mediathek] Error:", err))
 		self.working = False
 		self.deactivateCacheDialog()
 
@@ -358,8 +358,8 @@ class ARDMediathek(Screen):
 			movie = self.movies[0]
 			thumbUrl = movie[4]
 			try:
-				req = urllib2.Request(thumbUrl)
-				url_handle = urllib2.urlopen(req)
+				req = urllib.request.Request(thumbUrl)
+				url_handle = urllib.request.urlopen(req)
 				headers = url_handle.info()
 				contentType = headers.getheader("content-type")
 			except:
@@ -372,7 +372,7 @@ class ARDMediathek(Screen):
 				elif 'image/png' in contentType:
 					self.thumb = "/tmp/ard.png"
 				else:
-					print "[ARD Mediathek] Unknown thumbnail content-type:", contentType
+					print(("[ARD Mediathek] Unknown thumbnail content-type:", contentType))
 					self.thumb = None
 			else:
 				self.thumb = None
@@ -385,7 +385,7 @@ class ARDMediathek(Screen):
 			self.deactivateCacheDialog()
 
 	def downloadThumbnailError(self, err):
-		print "[ARD Mediathek] Error:", err
+		print(("[ARD Mediathek] Error:", err))
 		self.buildEntry(None)
 
 	def downloadThumbnailCallback(self, txt=""):

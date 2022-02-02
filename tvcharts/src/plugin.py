@@ -35,7 +35,7 @@ from random import randint
 from time import time, gmtime, strftime
 from twisted.web.client import getPage
 from xml.dom.minidom import parse, parseString
-from urllib import urlencode
+from urllib.parse import urlencode
 
 import timer
 import xml.etree.cElementTree
@@ -171,7 +171,7 @@ class TVChartsMain(Screen):
 			else:
 				self.session.open(MessageBox, "Sorry, no EPG Info available for this event", type=MessageBox.TYPE_ERROR, timeout=10)
 		elif self.mode == "moviecharts":
-			print "[TVCharts] ToDo: Show Movie Info here ..."
+			print("[TVCharts] ToDo: Show Movie Info here ...")
 			return
 
 	def addTimerCallback(self, answer):
@@ -186,7 +186,7 @@ class TVChartsMain(Screen):
 				if simulTimerList is not None:
 					self.session.openWithCallback(self.finishSanityCorrection, TimerSanityConflict, simulTimerList)
 		else:
-			print "Timeredit aborted"
+			print("Timeredit aborted")
 
 	def finishSanityCorrection(self, answer):
 		self.addTimerCallback(answer)
@@ -235,7 +235,7 @@ class TVChartsMain(Screen):
 					self.eventcache.append((eventinfo[0], eventinfo[7], eventinfo[8], eventinfo[4]))
 
 		except Exception:
-			print "[TVCharts Plugin] Error creating eventcache!"
+			print("[TVCharts Plugin] Error creating eventcache!")
 
 	def switchToTVCharts(self):
 		self.mode = "tvcharts"
@@ -266,7 +266,7 @@ class TVChartsMain(Screen):
 			self["info"].setText("Error: Plugin disabled in Settings ...")
 
 	def downloadListError(self, error=""):
-		print str(error)
+		print((str(error)))
 		self.session.open(MessageBox, "Error downloading Feed:\n%s" % str(error), type=MessageBox.TYPE_ERROR)
 		self["info"].setText("Error downloading Feed!")
 
@@ -490,7 +490,7 @@ class DBUpdateStatus(Screen):
 				self.DBStatusTimer.stop()
 
 	def updateStatus(self):
-		print "[TVCharts] Status Update ..."
+		print("[TVCharts] Status Update ...")
 		self.DBStatusTimer.stop()
 
 		if not config.plugins.tvcharts.enabled.value or Screens.Standby.inStandby:
@@ -537,7 +537,7 @@ class DBUpdateStatus(Screen):
 					if timer.disabled == 0 and timer.justplay == 0:
 						self.timerlist += "%s|%s|%s|%s|%s|%s\n" % (timer.eit,str(int(timer.begin)+(config.recording.margin_before.value*60)), str(int(timer.end)-(config.recording.margin_after.value*60)), str(timer.service_ref), timer.name, timer.service_ref.getServiceName().replace('\xc2\x86', '').replace('\xc2\x87', '').decode("utf-8", "ignore").encode("utf-8"))
 			except Exception:
-				print "[TVCharts] Error loading timers!"
+				print("[TVCharts] Error loading timers!")
 
 		# Status Update
 		getPage(url='http://www.dreambox-plugins.de/feeds/TVCharts/status.php', method='POST', headers={'Content-Type':'application/x-www-form-urlencoded'}, postdata=urlencode({'boxid' : self.BoxID, 'devicename' : self.DeviceName, 'imageversion' : self.ImageVersion, 'enigmaversion' : self.EnigmaVersion, 'lastchannel' : channel_name, 'lastevent' : event_name, 'eventdescr' : event_description, 'lastbegin' : event_begin, 'lastserviceref' : self.serviceref, 'timerlist' : self.timerlist})).addErrback(self.updateError)

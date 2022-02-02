@@ -40,7 +40,7 @@ language.addCallback(localeInit)
 
 def decode_charset(str, charset):
 	try:
-		uni = unicode(str, charset, 'strict')
+		uni = str(str, charset, 'strict')
 	except:
 		uni = str
 	return uni
@@ -125,7 +125,7 @@ class ZapStatistic:
 					if ref and begin and end:
 						self.zapEntries.append(ZapEntry(ref, float(begin), float(end)))
 			except:
-				print "[ZapStatistic] Error while reading xml file"
+				print("[ZapStatistic] Error while reading xml file")
 
 	def saveZapEntries(self):
 		xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<zapstastistic>\n'
@@ -139,7 +139,7 @@ class ZapStatistic:
 			f.write(xml.encode("UTF-8"))
 			f.close()
 		except:
-			print "[ZapStatistic] Error while writing xml file"
+			print("[ZapStatistic] Error while writing xml file")
 
 	def handlePlayServiceCommand(self, ref):
 		self.handleStopServiceCommand()

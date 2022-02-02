@@ -29,7 +29,7 @@ from Components.config import ConfigText
 from Components.config import config
 from Components.config import getConfigListEntry
 from Screens.Screen import Screen
-from YouTubeInterface import YouTubeUser
+from .YouTubeInterface import YouTubeUser
 
 from . import _
 
@@ -91,7 +91,7 @@ class __YouTubeUserConfig():
 
 	# Edit has been canceled
 	def cancel(self, user):
-		for element in user.getCfg().dict().values():
+		for element in list(user.getCfg().dict().values()):
 			element.cancel()
 
 	def getUserlist(self):

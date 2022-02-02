@@ -12,7 +12,7 @@ class SwitchService(Source):
 		self.res = self.switchService(cmd)
 		
 	def switchService(self, cmd):
-		print "[SwitchService] ref=%s" %cmd["sRef"]
+		print("[SwitchService] ref=%s" %cmd["sRef"])
 		
 		pc = config.ParentalControl.configured.value
 

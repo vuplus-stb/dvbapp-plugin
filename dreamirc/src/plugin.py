@@ -23,13 +23,13 @@ from twisted.internet import protocol
 from twisted.python import log
 from twisted.internet.defer import *
 
-from e2chat import *
-from e2account import *
-from e2support import *
-from dreamIRCTools import *
-from dreamIRCSetup import *
-from protocols import irc
-import ircsupport
+from .e2chat import *
+from .e2account import *
+from .e2support import *
+from .dreamIRCTools import *
+from .dreamIRCSetup import *
+from .protocols import irc
+from . import ircsupport
 
 import os 
 import string
@@ -46,7 +46,7 @@ class dreamIRCMainMenu(Screen):
 	global x,y
 	x= int(desk.size().width())
 	y= int(desk.size().height())
-	print "[dreamIRC] mainscreen: current desktop size: %dx%d" % (x,y)
+	print(("[dreamIRC] mainscreen: current desktop size: %dx%d" % (x,y)))
 
 	if (y>=720):
 		skin = """
@@ -182,7 +182,7 @@ class dreamIRCMainMenu(Screen):
 		self["input"].end()
 
 	def keyNumberGlobal(self, number):
-		print "You pressed number " + str(number)
+		print(("You pressed number " + str(number)))
 		self["input"].number(number)
 		
 	def keyDelete(self):
@@ -218,7 +218,7 @@ class dreamIRCMainMenu(Screen):
 				fp.close()
 				os.rename("/var/log/dreamIRC.log", "/var/log/dreamIRC_%s.log"%timestamp)
 			except IOError:
-				print "--- nothing to remove---"
+				print("--- nothing to remove---")
 			self.pipe.clear()
 			self.pipe.add(" -- not connected.. pls press green to connect!!\n")
 			self.pipe.clearBuddyList()
@@ -261,7 +261,7 @@ class dreamIRCMainMenu(Screen):
 			
 	def VirtualKeyBoardTextEntry(self, callback = None):
 		if callback is not None and len(callback):
-			print " TEXT = %s   - laenge = %d  !!!!" % (callback,len(callback))
+			print((" TEXT = %s   - laenge = %d  !!!!" % (callback,len(callback))))
 			self.pipe.addOutText(callback)
 
 def main(session, **kwargs):

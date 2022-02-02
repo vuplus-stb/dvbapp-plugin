@@ -48,7 +48,7 @@ from Components.ConfigList import ConfigListScreen
 from Screens.MessageBox import MessageBox
 from Components.GUIComponent import GUIComponent
 from Components.Sources.StaticText import StaticText
-from urllib import quote
+from urllib.parse import quote
 from twisted.web.client import downloadPage
 from Screens.ChoiceBox import ChoiceBox
 from Screens.VirtualKeyBoard import VirtualKeyBoard
@@ -285,7 +285,7 @@ class SHOUTcastWidget(Screen, InfoBarSeek):
 	def reloadStationListTimerTimeout(self):
 		self.stopReloadStationListTimer()
 		if self.mode == self.STATIONLIST:
-			print "[SHOUTcast] reloadStationList: %s " % self.stationListURL
+			print(("[SHOUTcast] reloadStationList: %s " % self.stationListURL))
 			sendUrlCommand(self.stationListURL, None,10).addCallback(self.callbackStationList).addErrback(self.callbackStationListError)
 
 	def InputBoxStartRecordingCallback(self, returnValue = None):
@@ -658,15 +658,15 @@ class SHOUTcastWidget(Screen, InfoBarSeek):
 		foundPos = result.find("imgres?imgurl=")
 		foundPos2 = result.find("&imgrefurl=")
 		if foundPos != -1 and foundPos2 != -1:
-			print "[SHOUTcast] downloading cover from %s " % result[foundPos+14:foundPos2]
+			print(("[SHOUTcast] downloading cover from %s " % result[foundPos+14:foundPos2]))
 			downloadPage(result[foundPos+14:foundPos2] ,"/tmp/.cover").addCallback(self.coverDownloadFinished).addErrback(self.coverDownloadFailed)
 
 	def coverDownloadFailed(self,result):
-        	print "[SHOUTcast] cover download failed: %s " % result
+        	print(("[SHOUTcast] cover download failed: %s " % result))
 		self["cover"].hide()
 
 	def coverDownloadFinished(self,result):
-		print "[SHOUTcast] cover download finished"
+		print("[SHOUTcast] cover download finished")
 		self["cover"].updateIcon("/tmp/.cover")
 		self["cover"].show()
 		
@@ -688,13 +688,13 @@ class SHOUTcastWidget(Screen, InfoBarSeek):
 	def __evAudioDecodeError(self):
 		currPlay = self.session.nav.getCurrentService()
 		sAudioType = currPlay.info().getInfoString(iServiceInformation.sUser+10)
-		print "[SHOUTcast __evAudioDecodeError] audio-codec %s can't be decoded by hardware" % (sAudioType)
+		print(("[SHOUTcast __evAudioDecodeError] audio-codec %s can't be decoded by hardware" % (sAudioType)))
 		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sAudioType, type = MessageBox.TYPE_INFO,timeout = 20 )
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
 		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[SHOUTcast __evPluginError]" , message
+		print(("[SHOUTcast __evPluginError]" , message))
 		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 20 )
 
 	def doEofInternal(self, playing):

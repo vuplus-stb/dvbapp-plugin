@@ -6,7 +6,7 @@ class MainPictureAdapter:
 		self.previousService = session.nav.getCurrentlyPlayingServiceReference()
 
 	def play(self, service):
-		print "[EPGRefresh.MainPictureAdapter.play]"
+		print("[EPGRefresh.MainPictureAdapter.play]")
 		return self.session.nav.playService(service)
 
 	def stop(self):

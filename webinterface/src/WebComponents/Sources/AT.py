@@ -6,14 +6,14 @@ class AT(Source):
 	WRITE = 1
 
 	def __init__(self, session, func=LIST):
-		print "AutoTimer: init: ", func
+		print("AutoTimer: init: ", func)
 		Source.__init__(self)
 		self.func = func
 		self.session = session
 		self.result = []
 
 	def handleCommand(self, cmd):
-		print "AutoTimer: handleCommand: ", cmd
+		print("AutoTimer: handleCommand: ", cmd)
 		if cmd is not None:
 			self.cmd = cmd
 			if self.func is self.LIST:
@@ -22,7 +22,7 @@ class AT(Source):
 				self.result = self.writeTimer(cmd)
 
 	def timerList(self):
-		print "timerList"
+		print("timerList")
 
 		try:
 			from Plugins.Extensions.AutoTimer.plugin import autotimer
@@ -36,7 +36,7 @@ class AT(Source):
 		returnList = []
 
 		for timer in autotimer.getTimerList():
-			print "TIMER: ", timer
+			print("TIMER: ", timer)
 			innerList = [
 				timer.getName(),
 				timer.getMatch()
@@ -113,7 +113,7 @@ class AT(Source):
 			else:
 				innerList.append("") # 24
 
-			print "Enabled", timer.getEnabled()
+			print("Enabled", timer.getEnabled())
 			innerList.append(timer.getEnabled()) # 25
 			innerList.append("off") # 26
 
@@ -122,12 +122,12 @@ class AT(Source):
 		return returnList
 
 	def writeTimer(self, param):
-		print "writeTimer: ", param
+		print("writeTimer: ", param)
 		# TODO: fix error handling
 		return
 
 	def command(self, param):
-		print "command: ", param
+		print("command: ", param)
 		return
 
 		param = int(param)

@@ -29,7 +29,7 @@ class RemoteControl(Source):
 		else:
 			self.remotetype = self.TYPE_STANDARD
 			
-		print "[RemoteControl.__init__] Configured RCU-Type is '%s'" %(self.remotetype)										
+		print("[RemoteControl.__init__] Configured RCU-Type is '%s'" %(self.remotetype))										
 
 	def handleCommand(self, cmd):
 		self.cmd = cmd
@@ -37,17 +37,17 @@ class RemoteControl(Source):
 
 	def sendEvent(self):
 		if len(self.cmd) == 0 or self.cmd is None:
-			print "[RemoteControl.sendEvent] cmd is empty or None"
+			print("[RemoteControl.sendEvent] cmd is empty or None")
 			return self.res
 		
 		if not "command" in self.cmd:
-			print "[RemoteControl.sendEvent] Obligatory parameter 'command' is missing!"
+			print("[RemoteControl.sendEvent] Obligatory parameter 'command' is missing!")
 			return ( False, "Obligatory parameter 'command' is missing!" )
 		
 		key = int(self.cmd["command"])			
 		
 		if key <= 0:			
-			print "[RemoteControl.sendEvent] command <= 0 (%s)" % key
+			print("[RemoteControl.sendEvent] command <= 0 (%s)" % key)
 			return ( False, "the command was not > 0" )
 		
 		#type can be "long" or "ascii", everything else will result in FLAG_MAKE
@@ -75,7 +75,7 @@ class RemoteControl(Source):
 		#Release the key		
 		self.eam.keyPressed(self.remotetype, key, self.FLAG_BREAK)
 			
-		print "[RemoteControl.sendEvent] command was was sent (key: %s, flag: %s)" %(key,flag)
+		print("[RemoteControl.sendEvent] command was was sent (key: %s, flag: %s)" %(key,flag))
 		return ( True, "RC command '" + str(key) + "' has been issued" ) 
 
 	result = property(lambda self: self.res)

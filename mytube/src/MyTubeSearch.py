@@ -1,4 +1,4 @@
-from MyTubeService import GoogleSuggestions
+from .MyTubeService import GoogleSuggestions
 from Screens.Screen import Screen
 from Screens.LocationBox import MovieLocationBox
 from Components.config import config, Config, ConfigSelection, ConfigText, getConfigListEntry, ConfigSubsection, ConfigYesNo, ConfigIP, ConfigNumber,ConfigLocations
@@ -18,11 +18,11 @@ from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_HDD
 from threading import Thread
 from threading import Condition
 from xml.etree.cElementTree import parse as cet_parse
-from StringIO import StringIO
+from io import StringIO
 
 
-import urllib
-from urllib import FancyURLopener
+import urllib.request, urllib.parse, urllib.error
+from urllib.request import FancyURLopener
 
 class MyOpener(FancyURLopener):
 	version = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12'
@@ -301,9 +301,9 @@ class MyTubeSuggestionsListScreen(Screen):
 					name = None
 					numresults = None
 					for subelement in suggestion:
-						if subelement.attrib.has_key('data'):
+						if 'data' in subelement.attrib:
 							name = subelement.attrib['data'].encode("UTF-8")
-						if subelement.attrib.has_key('int'):
+						if 'int' in subelement.attrib:
 							numresults = subelement.attrib['int']
 						if name and numresults:
 							self.suggestlist.append((name, numresults ))
@@ -321,43 +321,43 @@ class MyTubeSuggestionsListScreen(Screen):
 		return len(self.list)
 
 	def up(self):
-		print "up"
+		print("up")
 		if self.list and len(self.list) > 0:
 			self["suggestionslist"].selectPrevious()
 			return self.getSelection()
 
 	def down(self):
-		print "down"
+		print("down")
 		if self.list and len(self.list) > 0:
 			self["suggestionslist"].selectNext()
 			return self.getSelection()
 	
 	def pageUp(self):
-		print "up"
+		print("up")
 		if self.list and len(self.list) > 0:
 			self["suggestionslist"].selectPrevious()
 			return self.getSelection()
 
 	def pageDown(self):
-		print "down"
+		print("down")
 		if self.list and len(self.list) > 0:
 			self["suggestionslist"].selectNext()
 			return self.getSelection()
 
 	def activate(self):
-		print "activate"
+		print("activate")
 		self.activeState = True
 		return self.getSelection()
 
 	def deactivate(self):
-		print "deactivate"
+		print("deactivate")
 		self.activeState = False
 		return self.getSelection()
 
 	def getSelection(self):
 		if self["suggestionslist"].getCurrent() is None:
 			return None
-		print self["suggestionslist"].getCurrent()[0]
+		print((self["suggestionslist"].getCurrent()[0]))
 		return self["suggestionslist"].getCurrent()[0]
 
 	def enableSelection(self,value):
@@ -446,7 +446,7 @@ class MyTubeSettingsScreen(Screen, ConfigListScreen):
 		current = self["config"].getCurrent()
 
 	def newConfig(self):
-		print "newConfig", self["config"].getCurrent()
+		print(("newConfig", self["config"].getCurrent()))
 		if self["config"].getCurrent() == self.loadFeedEntry:
 			self.createSetup()
 
@@ -484,13 +484,13 @@ class MyTubeSettingsScreen(Screen, ConfigListScreen):
 		self.newConfig()
 
 	def keyCancel(self):
-		print "cancel"
+		print("cancel")
 		for x in self["config"].list:
 			x[1].cancel()
 		self.close()	
 
 	def keySave(self):
-		print "saving"
+		print("saving")
 		config.plugins.mytube.search.orderBy.save()
 		config.plugins.mytube.search.racy.save()
 		config.plugins.mytube.search.categories.save()
@@ -592,14 +592,14 @@ class MyTubeTasksScreen(Screen):
 
 	def keyOK(self):
 		current = self["tasklist"].getCurrent()
-		print current
+		print(current)
 		if current:
 			job = current[0]
 			from Screens.TaskView import JobView
 			self.session.openWithCallback(self.JobViewCB, JobView, job)
 	
 	def JobViewCB(self, why):
-		print "WHY---",why
+		print(("WHY---",why))
 
 	def keyCancel(self):
 		self.close()	
@@ -628,17 +628,17 @@ class MyTubeHistoryScreen(Screen):
 		Screen.__init__(self, session)
 		self.session = session
 		self.historylist = []
-		print "self.historylist",self.historylist
+		print(("self.historylist",self.historylist))
 		self["historylist"] = List(self.historylist)
 		self.activeState = False
 		
 	def activate(self):
-		print "activate"
+		print("activate")
 		self.activeState = True
 		self.history = config.plugins.mytube.general.history.value.split(',')
 		if self.history[0] == '':
 			del self.history[0]
-		print "self.history",self.history
+		print(("self.history",self.history))
 		self.historylist = []
 		for entry in self.history:
 			self.historylist.append(( str(entry),))
@@ -646,36 +646,36 @@ class MyTubeHistoryScreen(Screen):
 		self["historylist"].updateList(self.historylist)
 
 	def deactivate(self):
-		print "deactivate"
+		print("deactivate")
 		self.activeState = False
 
 	def status(self):
-		print self.activeState
+		print((self.activeState))
 		return self.activeState
 	
 	def getSelection(self):
 		if self["historylist"].getCurrent() is None:
 			return None
-		print self["historylist"].getCurrent()[0]
+		print((self["historylist"].getCurrent()[0]))
 		return self["historylist"].getCurrent()[0]
 
 	def up(self):
-		print "up"
+		print("up")
 		self["historylist"].selectPrevious()
 		return self.getSelection()
 
 	def down(self):
-		print "down"
+		print("down")
 		self["historylist"].selectNext()
 		return self.getSelection()
 	
 	def pageUp(self):
-		print "up"
+		print("up")
 		self["historylist"].selectPrevious()
 		return self.getSelection()
 
 	def pageDown(self):
-		print "down"
+		print("down")
 		self["historylist"].selectNext()
 		return self.getSelection()
 

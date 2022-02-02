@@ -15,15 +15,15 @@ from xml.sax import make_parser
 from xml.sax.handler import ContentHandler, feature_namespaces
 from xml.sax.saxutils import escape as escape_xml
 from twisted.python import util
-from urllib2 import quote
+from urllib.parse import quote
 from time import time
 
 #DO NOT REMOVE THIS IMPORT
 #It IS used (dynamically)
-from WebScreens import *
+from .WebScreens import *
 #DO NOT REMOVE THIS IMPORT
 
-from __init__ import decrypt_block
+from .__init__ import decrypt_block
 from os import urandom
 
 global screen_cache
@@ -224,7 +224,7 @@ class SimpleListFiller(Converter):
 		
 		list = [ ]
 		for element in conv_args:
-			if isinstance(element, basestring):
+			if isinstance(element, str):
 				list.append((element, None))
 			elif isinstance(element, ListItem):
 				list.append((element, element.filternum))
@@ -286,7 +286,7 @@ class ListFiller(Converter):
 		# list to avoid lookup of item name for each entry
 		lutlist = [ ]
 		for element in conv_args:
-			if isinstance(element, basestring):
+			if isinstance(element, str):
 				lutlist.append((element, None))
 			elif isinstance(element, ListItem):
 				lutlist.append((lut[element.name], element.filternum))
@@ -364,18 +364,18 @@ class webifHandler(ContentHandler):
 		while len(path) > 1:
 			scr = self.screen.getRelatedScreen(path[0])
 			if scr is None:
-				print "[webif.py] Parent Screen not found!"
-				print wsource
+				print("[webif.py] Parent Screen not found!")
+				print(wsource)
 			path = path[1:]
 
 		source = scr.get(path[0])
 
 		if isinstance(source, ObsoleteSource):
 			# however, if we found an "obsolete source", issue warning, and resolve the real source.
-			print "WARNING: WEBIF '%s' USES OBSOLETE SOURCE '%s', USE '%s' INSTEAD!" % (name, wsource, source.new_source)
-			print "OBSOLETE SOURCE WILL BE REMOVED %s, PLEASE UPDATE!" % (source.removal_date)
+			print("WARNING: WEBIF '%s' USES OBSOLETE SOURCE '%s', USE '%s' INSTEAD!" % (name, wsource, source.new_source))
+			print("OBSOLETE SOURCE WILL BE REMOVED %s, PLEASE UPDATE!" % (source.removal_date))
 			if source.description:
-				print source.description
+				print(source.description)
 
 			wsource = source.new_source
 		else:
@@ -435,7 +435,7 @@ class webifHandler(ContentHandler):
 	def startElement(self, name, attrs):
 		if name == "e2:screen":
 			if "external_module" in attrs:
-				exec "from " + attrs["external_module"] + " import *"
+				exec("from " + attrs["external_module"] + " import *")
 			self.screen = eval(attrs["name"])(self.session, self.request) # fixme
 			self.screens.append(self.screen)
 			return
@@ -443,7 +443,7 @@ class webifHandler(ContentHandler):
 		if name[:3] == "e2:":
 			self.mode += 1
 
-		tag = '<' + name + ''.join([' %s="%s"' % x for x in attrs.items()]) + '>'
+		tag = '<' + name + ''.join([' %s="%s"' % x for x in list(attrs.items())]) + '>'
 		#tag = tag.encode('utf-8')
 
 		if self.mode == 0:
@@ -497,7 +497,7 @@ class webifHandler(ContentHandler):
 			screen.execBegin()
 
 	def cleanup(self):
-		print "screen cleanup!"
+		print("screen cleanup!")
 		for screen in self.screens:
 			screen.execEnd()
 			screen.doClose()

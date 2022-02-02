@@ -15,7 +15,7 @@ from Components.Sources.StaticText import StaticText
 from Components.Sources.List import List
 from Plugins.Plugin import PluginDescriptor
 
-from __init__ import _
+from .__init__ import _
 
 import string
 import sys 
@@ -79,7 +79,7 @@ class ChangePasswdScreen(Screen):
 		return ''.join(Random().sample(passwdChars, passwdLength)) 
 
 	def SetPasswd(self):
-		print "Changing password for %s to %s" % (self.user,self.password) 
+		print(("Changing password for %s to %s" % (self.user,self.password))) 
 		self.container = eConsoleAppContainer()
 		self.container.appClosed.append(self.runFinished)
 		self.container.dataAvail.append(self.dataAvail)

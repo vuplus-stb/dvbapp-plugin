@@ -1,4 +1,4 @@
-from urllib import unquote_plus
+from urllib.parse import unquote_plus
 from twisted.web.client import getPage
 from md5 import md5 # to encode password
 from string import split, rstrip
@@ -89,7 +89,7 @@ class LastFM(LastFMHandler):
 
     def connectCB(self,data):
         self.info = self._parselines(data)
-        if self.info.has_key("session"):
+        if "session" in self.info:
             self.lastfmsession = self.info["session"]
             if self.lastfmsession.startswith("FAILED"):
                 self.onConnectFailed(self.info["msg"])
@@ -116,11 +116,11 @@ class LastFM(LastFMHandler):
                 except UnicodeDecodeError:
                     res[x[0]] = "unicodeproblem"
             elif x != [""]:
-                print "(urk?", x, ")"
+                print(("(urk?", x, ")"))
         return res
 
     def loadPlaylist(self):
-        print "LOADING PLAYLIST"
+        print("LOADING PLAYLIST")
         if self.state is not True:
             self.onCommandFailed("not logged in")
         else:
@@ -144,19 +144,19 @@ class LastFM(LastFMHandler):
         return "lastfm://user/%s/loved"%username
     
     def getSimilarArtistsURL(self,artist=None):
-        if artist is None and self.metadata.has_key('artist'):
+        if artist is None and 'artist' in self.metadata:
             return "lastfm://artist/%s/similarartists"%self.metadata['artist'].replace(" ","%20")
         else:
             return "lastfm://artist/%s/similarartists"%artist.replace(" ","%20")
 
     def getArtistsLikedByFans(self,artist=None):
-        if artist is None and self.metadata.has_key('artist'):
+        if artist is None and 'artist' in self.metadata:
             return "lastfm://artist/%s/fans"%self.metadata['artist'].replace(" ","%20")
         else:
             return "lastfm://artist/%s/fans"%artist.replace(" ","%20")
     
     def getArtistGroup(self,artist=None):
-        if artist is None and self.metadata.has_key('artist'):
+        if artist is None and 'artist' in self.metadata:
             return "lastfm://group/%s"%self.metadata['artist'].replace(" ","%20")
         else:
             return "lastfm://group/%s"%artist.replace(" ","%20")
@@ -245,7 +245,7 @@ class LastFM(LastFMHandler):
                 nodex['url'] =  node.getAttribute("url").encode("utf-8")
                 data.append(nodex)
             self.onGlobalTagsLoaded(data)
-        except xml.parsers.expat.ExpatError,e:
+        except xml.parsers.expat.ExpatError as e:
             self.onCommandFailed(e)
 
     def getTopTracks(self,username):
@@ -331,8 +331,8 @@ class LastFM(LastFMHandler):
                 nodex['_display'] = nodex['artist']+" - "+nodex['name']
                 data.append(nodex)
             return True,data
-        except xml.parsers.expat.ExpatError,e:
-            print e
+        except xml.parsers.expat.ExpatError as e:
+            print(e)
             return False,e
 
     def getNeighbours(self,username):
@@ -383,8 +383,8 @@ class LastFM(LastFMHandler):
                 nodex['_display'] = nodex['name']
                 data.append(nodex)
             return True,data
-        except xml.parsers.expat.ExpatError,e:
-            print e
+        except xml.parsers.expat.ExpatError as e:
+            print(e)
             return False,e
 
     def changeStation(self,url):

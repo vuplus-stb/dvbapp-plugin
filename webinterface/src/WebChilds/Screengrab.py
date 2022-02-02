@@ -23,7 +23,7 @@ class GrabResource(resource.Resource):
 		videoOnly = False
 		save = False
 
-		for key, value in request.args.items():
+		for key, value in list(request.args.items()):
 			if key in GrabResource.SPECIAL_ARGS:
 				if key == 'format':
 					format = value[0]
@@ -93,11 +93,11 @@ class GrabStream:
 		self.container.appClosed.append(self.cmdFinished)
 		self.container.dataAvail.append(self.dataAvail)
 
-		print '[Screengrab.py] starting AiO grab with cmdline:', cmd
+		print('[Screengrab.py] starting AiO grab with cmdline:', cmd)
 		self.container.execute(*cmd)
 
 	def cmdFinished(self, data):
-		print '[Screengrab.py] cmdFinished'
+		print('[Screengrab.py] cmdFinished')
 		if int(data) is 0 and self.target is not None:
 			try:
 				self.request.setHeader('Content-Length', '%i' %os_path_getsize(self.target))
@@ -106,8 +106,8 @@ class GrabStream:
 				fp.close()
 				if self.save is False:
 					os_remove(self.target)
-					print '[Screengrab.py] %s removed' %self.target
-			except Exception,e:
+					print('[Screengrab.py] %s removed' %self.target)
+			except Exception as e:
 				self.request.write('Internal error while reading target file')
 		elif int(data) is 0 and self.target is None:
 			self.request.write(self.output)
@@ -119,5 +119,5 @@ class GrabStream:
 		self.request.finish()
 
 	def dataAvail(self, data):
-		print '[Screengrab.py] data Available ', data
+		print('[Screengrab.py] data Available ', data)
 

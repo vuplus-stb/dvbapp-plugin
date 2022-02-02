@@ -13,7 +13,7 @@ begin = mktime((
 	0, now.tm_wday, now.tm_yday, now.tm_isdst)
 )
 end = mktime((
-	now.tm_year, now.tm_mon, now.tm_mday, 06, 30, \
+	now.tm_year, now.tm_mon, now.tm_mday, 0o6, 30, \
 	0, now.tm_wday, now.tm_yday, now.tm_isdst)
 )
 
@@ -34,9 +34,9 @@ config.plugins.epgrefresh.background = ConfigYesNo(default = False)
 del now, begin, end
 
 # Plugin
-from EPGRefresh import epgrefresh
-from EPGRefreshConfiguration import EPGRefreshConfiguration
-from EPGRefreshService import EPGRefreshService
+from .EPGRefresh import epgrefresh
+from .EPGRefreshConfiguration import EPGRefreshConfiguration
+from .EPGRefreshService import EPGRefreshService
 
 # Plugin definition
 from Plugins.Plugin import PluginDescriptor
@@ -48,7 +48,7 @@ def standbyQuestionCallback(session, res = None):
 
 # Autostart
 def autostart(reason, **kwargs):
-	if reason == 0 and kwargs.has_key("session"):
+	if reason == 0 and "session" in kwargs:
 		session = kwargs["session"]
 		epgrefresh.session = session
 

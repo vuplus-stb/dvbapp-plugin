@@ -25,14 +25,14 @@ from Components.config import ConfigYesNo
 from Components.config import config
 from Components.config import getConfigListEntry
 from Screens.Screen import Screen
-from VlcServer import VlcServer
+from .VlcServer import VlcServer
 from . import _
 
 class ConfigMutable(ConfigElement):
 	def __init__(self, configElementDict, defaultKey):
 		ConfigElement.__init__(self)
 		self.configElementDict = configElementDict
-		if self.configElementDict.has_key(defaultKey):
+		if defaultKey in self.configElementDict:
 			self.currentConfig = self.configElementDict[defaultKey]
 			self.currentKey = defaultKey
 			self.defaultKey = self.currentKey
@@ -41,7 +41,7 @@ class ConfigMutable(ConfigElement):
 		self.elements[key] = configElement
 
 	def setAsCurrent(self, key):
-		if self.configElementDict.has_key(key):
+		if key in self.configElementDict:
 			self.currentConfig = self.configElementDict[key]
 			self.currentKey = key
 			self.saved_value = self.currentConfig.saved_value
@@ -236,7 +236,7 @@ class __VlcServerConfig():
 
 	# Edit has been canceled
 	def cancel(self, server):
-		for element in server.getCfg().dict().values():
+		for element in list(server.getCfg().dict().values()):
 			element.cancel()
 
 	def getServerlist(self):

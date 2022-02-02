@@ -1,6 +1,6 @@
 # videarn plugin by AliAbdul
-from Plugin import Movie, Plugin
-import re, urllib2
+from .Plugin import Movie, Plugin
+import re, urllib.request, urllib.error, urllib.parse
 
 ##################################################
 
@@ -10,7 +10,7 @@ class VidearnMovie(Movie):
 
 	def getVideoUrl(self):
 		try:
-			data = urllib2.urlopen(self.url).read()
+			data = urllib.request.urlopen(self.url).read()
 		except:
 			data = ""
 		reonecat = re.compile(r"<source src='(.+?)' type='video/mp4;'>")
@@ -49,7 +49,7 @@ class VidearnSub(Plugin):
 
 	def getPageError(self, error=None):
 		if error and self.currPage == 1:
-			print "[%s] Error: %s" % (self.name, error)
+			print(("[%s] Error: %s" % (self.name, error)))
 		else:
 			self.moreEntries = False
 
@@ -76,7 +76,7 @@ class Videarn(Plugin):
 		self.callback(plugins)
 
 	def getPageError(self, error=None):
-		if error: print "[%s] Error: %s" % (self.name, error)
+		if error: print(("[%s] Error: %s" % (self.name, error)))
 
 ##################################################
 

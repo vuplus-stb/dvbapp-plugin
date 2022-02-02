@@ -18,15 +18,15 @@
 #    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ############################################################################
 
-import urllib
-import httplib
+import urllib.request, urllib.parse, urllib.error
+import http.client
 import socket
 
 
 class GoogleSuggestions():
 	def __init__(self, callback, ds = None, json = None, hl = None):
 		self.callback = callback
-		self.conn = httplib.HTTPConnection("google.com")
+		self.conn = http.client.HTTPConnection("google.com")
 		self.prepQuerry = "/complete/search?"
 		if ds is not None:
 			self.prepQuerry = self.prepQuerry + "ds=" + ds + "&"
@@ -43,22 +43,22 @@ class GoogleSuggestions():
 
 	def getSuggestions(self, querryString):
 		if querryString is not "":
-			querry = self.prepQuerry + urllib.quote(querryString)
+			querry = self.prepQuerry + urllib.parse.quote(querryString)
 			try:
 				self.conn.request("GET", querry)
-			except (httplib.CannotSendRequest, socket.gaierror, socket.error):
-				print "[YTB] Can not send request for suggestions"
+			except (http.client.CannotSendRequest, socket.gaierror, socket.error):
+				print("[YTB] Can not send request for suggestions")
 				self.callback(None)
 			else:
 				try:
 					response = self.conn.getresponse()
-				except httplib.BadStatusLine:
-					print "[YTB] Can not get a response from google"
+				except http.client.BadStatusLine:
+					print("[YTB] Can not get a response from google")
 					self.callback(None)
 				else:
 					if response.status == 200:
 						data = response.read()
-						exec data
+						exec(data)
 					else:
 						self.callback(None)
 			self.conn.close()

@@ -11,11 +11,11 @@ class SubServices(Source):
 
 	def handleCommand(self, cmd):
 		if cmd is not None:
-			print "[SubServices].handleCommand %s" %cmd
+			print("[SubServices].handleCommand %s" %cmd)
 			self.cmd = cmd
 
 	def getSubservices(self):
-		print "[SubServices].getSubservices called"
+		print("[SubServices].getSubservices called")
 		list = []
 
 		if self.streamingScreens is None:
@@ -39,21 +39,21 @@ class SubServices(Source):
 			else:
 				list = (("N/A", "N/A"),)
 
-			print "SubServices is returning list ", list
+			print("SubServices is returning list ", list)
 			return list
 
 		elif self.cmd is not None:
-			print "[SubServices].getSubservices for Streaming Service"
+			print("[SubServices].getSubservices for Streaming Service")
 			for screen in self.streamingScreens:
 				if screen is not None:
 					service = screen.getRecordService()
 					sref = ServiceReference(screen.getRecordServiceRef())
 					if service is not None:
-						print "[SubServices] serviceref: %s | cmd: %s" %(sref, self.cmd)
+						print("[SubServices] serviceref: %s | cmd: %s" %(sref, self.cmd))
 
 						if sref.__str__() == self.cmd:
 							list.append((sref.__str__(), sref.getServiceName()))
-							print "[SubServices] Matching recordSerivce found!"
+							print("[SubServices] Matching recordSerivce found!")
 							subservices = service and service.subServices()
 							if subservices and subservices.getNumberOfSubservices() != 0:
 								n = subservices and subservices.getNumberOfSubservices()
@@ -65,9 +65,9 @@ class SubServices(Source):
 
 								return list
 							else:
-								print "[SubServices] no items: %s" %subservices
+								print("[SubServices] no items: %s" %subservices)
 					else:
-						print "[SubServices] Service is None!"
+						print("[SubServices] Service is None!")
 		if not list:
 			return (("N/A", "N/A"),)
 

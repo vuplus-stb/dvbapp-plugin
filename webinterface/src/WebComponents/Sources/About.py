@@ -22,7 +22,7 @@ class About(Source):
 
 		if iNetwork.getNumberOfAdapters > 0:
 			iface = iNetwork.getAdapterList()[0]
-			print "[WebComponents.About] iface: %s" % iface
+			print("[WebComponents.About] iface: %s" % iface)
 			list.extend((
 				iNetwork.getAdapterAttribute(iface, "mac"),
 				iNetwork.getAdapterAttribute(iface, "dhcp"),
@@ -31,7 +31,7 @@ class About(Source):
 				ConvertIP(iNetwork.getAdapterAttribute(iface, "gateway")),
 			))
 		else:
-			print "[WebComponents.About] no network iface configured!"
+			print("[WebComponents.About] no network iface configured!")
 			list.extend((
 				"N/A",
 				"N/A",

@@ -21,7 +21,7 @@ class EPG(Source):
 		self.search = False
 
 	def handleCommand(self, cmd):
-		print "[WebComponents.EPG] setting command to '%s' " %cmd
+		print("[WebComponents.EPG] setting command to '%s' " %cmd)
 		self.command = cmd
 
 	def do_func(self):
@@ -59,7 +59,7 @@ class EPG(Source):
 		return self.getEPGNowNext(ref, 1, True)
 
 	def getEPGNowNext(self, ref, type, service=False):
-		print "[WebComponents.EPG] getting EPG NOW/NEXT", ref
+		print("[WebComponents.EPG] getting EPG NOW/NEXT", ref)
 
 		if service:
 			events = self.epgcache.lookupEvent(['IBDCTSERNX', (ref, type, -1)])
@@ -79,7 +79,7 @@ class EPG(Source):
 		return ()
 
 	def getEPGofService(self, param, options='IBDCTSERN'):
-		print "[WebComponents.EPG] getEPGofService param: ", param
+		print("[WebComponents.EPG] getEPGofService param: ", param)
 		
 		if "sRef" in param:
 			service = param["sRef"]
@@ -130,7 +130,7 @@ class EPG(Source):
 		return list
 
 	def getEPGofBouquet(self, param):
-		print "[WebComponents.EPG] getting EPG for Bouquet", param
+		print("[WebComponents.EPG] getting EPG for Bouquet", param)
 
 		if 'bRef' not in param:
 			return ()
@@ -159,7 +159,7 @@ class EPG(Source):
 		return ()
 
 	def searchEvent(self, needle):
-		print "[WebComponents.EPG] searching EPG: ", needle
+		print("[WebComponents.EPG] searching EPG: ", needle)
 		self.search = True
 
 		events = self.epgcache.search(('IBDTSERN', 256, eEPGCache.PARTIAL_TITLE_SEARCH, needle, 1));
@@ -168,7 +168,7 @@ class EPG(Source):
 		return ()
 
 	def searchSimilarEvent(self, needle):
-		print "[WebComponents.EPG] searching similar eventid: ",needle
+		print("[WebComponents.EPG] searching similar eventid: ",needle)
 
 		events = self.epgcache.search(('IBDCTSERN', 256, eEPGCache.SIMILAR_BROADCASTINGS_SEARCH, needle['sRef'], int(needle['eventid'])));
 		if events:

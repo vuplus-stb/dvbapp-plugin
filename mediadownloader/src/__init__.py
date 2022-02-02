@@ -12,7 +12,7 @@ def localeInit():
 def _(txt):
 	t = gettext.dgettext("MediaDownloader", txt)
 	if t == txt:
-		print "[MediaDownloader] fallback to default translation for", txt
+		print(("[MediaDownloader] fallback to default translation for", txt))
 		t = gettext.gettext(txt)
 	return t
 

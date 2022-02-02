@@ -13,10 +13,10 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE
 from os import path as os_path
 
-from MountView import AutoMountView
-from MountEdit import AutoMountEdit
-from AutoMount import iAutoMount, AutoMount
-from UserManager import UserManager
+from .MountView import AutoMountView
+from .MountEdit import AutoMountEdit
+from .AutoMount import iAutoMount, AutoMount
+from .UserManager import UserManager
 
 class AutoMountManager(Screen):
 	skin = """

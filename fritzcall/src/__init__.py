@@ -37,7 +37,7 @@ def debug(message):
 			# deb.write(headerstr + message.decode('utf-8') + u"\n")
 			deb.write(message + "\n")
 			deb.close()
-		except Exception, e:
+		except Exception as e:
 			debug("%s (retried debug: %s)" % (repr(message), str(e)))
 		
 

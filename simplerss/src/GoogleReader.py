@@ -1,6 +1,6 @@
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from twisted.web.client import getPage
-from RSSFeed import UniversalFeed
+from .RSSFeed import UniversalFeed
 from twisted.internet.defer import Deferred
 from xml.etree.cElementTree import fromstring as cet_fromstring
 
@@ -12,7 +12,7 @@ class GoogleReader:
 		self.auth = None
 
 	def sendRequest(self, url):
-		print "[GoogleReader] sendRequest:", url
+		print(("[GoogleReader] sendRequest:", url))
 		headers = {
 			'Authorization': 'GoogleLogin auth='+self.auth,
 		}
@@ -20,7 +20,7 @@ class GoogleReader:
 		return getPage(url, headers=headers)
 
 	def login(self):
-		print "[GoogleReader] login"
+		print("[GoogleReader] login")
 		if not self.username or not self.password:
 			return
 
@@ -34,7 +34,7 @@ class GoogleReader:
 		}
 
 		defer = Deferred()
-		getPage('https://www.google.com/accounts/ClientLogin', method = 'POST', headers = headers, postdata = urllib.urlencode(data)).addCallback(self.loginFinished, defer).addErrback(self.loginFailed, defer)
+		getPage('https://www.google.com/accounts/ClientLogin', method = 'POST', headers = headers, postdata = urllib.parse.urlencode(data)).addCallback(self.loginFinished, defer).addErrback(self.loginFailed, defer)
 		return defer
 
 	def loginFinished(self, res = None, defer = None):
@@ -45,7 +45,7 @@ class GoogleReader:
 			defer.callback(self.auth)
 
 	def loginFailed(self, res = None, defer = None):
-		print "[GoogleReader] loginFailed:", res
+		print(("[GoogleReader] loginFailed:", res))
 		if defer:
 			# XXX: we might want to give some information here besides "we failed"
 			defer.errback()
@@ -64,7 +64,7 @@ class GoogleReader:
 			defer.callback(res)
 
 	def errToken(self, res = None, defer = None):
-		print "[GoogleReader] errToken", res
+		print(("[GoogleReader] errToken", res))
 		self.token = None
 		if defer:
 			# XXX: we might want to give some information here besides "we failed"
@@ -90,7 +90,7 @@ class GoogleReader:
 			defer.callback(l)
 
 	def errSubscriptionList(self, res = None, defer = None):
-		print "[GoogleReader] errSubscriptionList", res
+		print(("[GoogleReader] errSubscriptionList", res))
 		if defer:
 			# XXX: we might want to give some information here besides "we failed"
 			defer.errback()
@@ -104,13 +104,13 @@ if __name__ == '__main__':
 		googleReader.getSubscriptionList().addCallback(googleSubscriptionList).addErrback(googleSubscriptionFailed)
 
 	def googleLoginFailed(self, res = None):
-		print "Failed to login to Google Reader."
+		print("Failed to login to Google Reader.")
 
 	def googleSubscriptionList(self, subscriptions = None):
-		print "Got Feeds:", subscriptions
+		print(("Got Feeds:", subscriptions))
 
 	def googleSubscriptionFailed(self, res = None):
-		print "Failed to get subscriptions from Google Reader."
+		print("Failed to get subscriptions from Google Reader.")
 
 	googleReader.login().addCallback(googleLoggedIn).addErrback(googleLoginFailed)
 	reactor.run()

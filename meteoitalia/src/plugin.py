@@ -17,8 +17,8 @@ from Components.Sources.List import List
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Tools.Directories import fileExists
-
-from urllib2 import Request, urlopen, URLError, HTTPError
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
 from xml.dom import minidom, Node
 from enigma import loadPic, eTimer
 
@@ -93,9 +93,9 @@ class meteoitMain(Screen):
 		req = Request(myurl)
 		try:
     			handler = urlopen(req)
-		except HTTPError, e:
+		except HTTPError as e:
     			maintext = "Error: connection failed !"
-		except URLError, e:
+		except URLError as e:
     			maintext = "Error: Page not available !"
 		else:
 			xml_response = handler.read()
@@ -113,7 +113,7 @@ class meteoitMain(Screen):
         				'forecast_information': ('postal_code', 'current_date_time'),
         				'current_conditions': ('condition','temp_c', 'humidity', 'wind_condition', 'icon')
     				}
-    				for (tag, list_of_tags2) in data_structure.iteritems():
+    				for (tag, list_of_tags2) in list(data_structure.items()):
         				tmp_conditions = {}
        					for tag2 in list_of_tags2:
             					try: 

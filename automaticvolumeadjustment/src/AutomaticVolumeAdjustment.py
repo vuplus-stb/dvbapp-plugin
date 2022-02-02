@@ -28,14 +28,14 @@ from Components.ServiceEventTracker import ServiceEventTracker
 from enigma import iPlayableService, iServiceInformation, eDVBVolumecontrol, eServiceCenter, eServiceReference
 from ServiceReference import ServiceReference
 from Components.VolumeControl import VolumeControl
-from AutomaticVolumeAdjustmentConfig import AutomaticVolumeAdjustmentConfig, getVolumeDict
+from .AutomaticVolumeAdjustmentConfig import AutomaticVolumeAdjustmentConfig, getVolumeDict
 
 class AutomaticVolumeAdjustment(Screen):
 	instance = None
 	def __init__(self, session):
 		self.session = session
 		Screen.__init__(self, session)
-		print "[AutomaticVolumeAdjustment] Starting AutomaticVolumeAdjustment..."
+		print("[AutomaticVolumeAdjustment] Starting AutomaticVolumeAdjustment...")
 		self.__event_tracker = ServiceEventTracker(screen = self, eventmap =
 			{
 				iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
@@ -57,7 +57,7 @@ class AutomaticVolumeAdjustment(Screen):
 		self.volctrl = eDVBVolumecontrol.getInstance()
 
 	def initializeConfigValues(self, configVA, fromOutside):
-		print "[AutomaticVolumeAdjustment] initialize config values..."
+		print("[AutomaticVolumeAdjustment] initialize config values...")
 		self.serviceList = { }
 		self.modus = configVA.config.modus.value # get modus
 		if self.modus == "0": # Automatic volume adjust mode
@@ -92,7 +92,7 @@ class AutomaticVolumeAdjustment(Screen):
 
 	def __evUpdatedInfo(self):
 		if self.newService and self.session.nav.getCurrentlyPlayingServiceReference() and self.enabled:
-			print "[AutomaticVolumeAdjustment] service changed"
+			print("[AutomaticVolumeAdjustment] service changed")
 			self.newService = False
 			self.currentVolume = 0 # init
 			if self.modus == "0": # Automatic volume adjust mode
@@ -115,7 +115,7 @@ class AutomaticVolumeAdjustment(Screen):
 							if ajvol == 0:
 								ajvol = vol - currentvol # correction for debug -print only
 							self.setVolume(vol+self.lastAdjustedValue)
-							print "[AutomaticVolumeAdjustment] Change volume for service: %s (+%d) to %d"%(ServiceReference(ref).getServiceName().replace('\xc2\x86', '').replace('\xc2\x87', ''), ajvol, self.volctrl.getVolume())
+							print(("[AutomaticVolumeAdjustment] Change volume for service: %s (+%d) to %d"%(ServiceReference(ref).getServiceName().replace('\xc2\x86', '').replace('\xc2\x87', ''), ajvol, self.volctrl.getVolume())))
 						self.currentVolume = self.volctrl.getVolume() # ac3||dts service , save current volume
 					else:
 						# mpeg or whatever audio
@@ -126,7 +126,7 @@ class AutomaticVolumeAdjustment(Screen):
 							if ajvol > self.maxMPEGVolume:
 									ajvol = self.maxMPEGVolume
 							self.setVolume(ajvol)
-							print "[AutomaticVolumeAdjustment] Change volume for service: %s (-%d) to %d"%(ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName().replace('\xc2\x86', '').replace('\xc2\x87', ''), vol-ajvol, self.volctrl.getVolume())
+							print(("[AutomaticVolumeAdjustment] Change volume for service: %s (-%d) to %d"%(ServiceReference(self.session.nav.getCurrentlyPlayingServiceReference()).getServiceName().replace('\xc2\x86', '').replace('\xc2\x87', ''), vol-ajvol, self.volctrl.getVolume())))
 							self.lastAdjustedValue = 0 # mpeg audio, no delta here
 					return # get out of here, nothing to do anymore
 			else: # modus = Remember channel volume
@@ -138,7 +138,7 @@ class AutomaticVolumeAdjustment(Screen):
 						if lastvol != -1 and lastvol != self.volctrl.getVolume():
 							# set volume value
 							self.setVolume(lastvol)
-							print "[AutomaticVolumeAdjustment] Set last used volume value for service %s to %d"%(ServiceReference(ref).getServiceName().replace('\xc2\x86', '').replace('\xc2\x87', ''), self.volctrl.getVolume())
+							print(("[AutomaticVolumeAdjustment] Set last used volume value for service %s to %d"%(ServiceReference(ref).getServiceName().replace('\xc2\x86', '').replace('\xc2\x87', ''), self.volctrl.getVolume())))
 					return # get out of here, nothing to do anymore
 			if not self.pluginStarted:
 				if self.modus == "0": # Automatic volume adjust mode
@@ -198,7 +198,7 @@ def VolumeControlInit(enabled, maxVolume):
 	global baseVolumeControl_setVolume
 	if baseVolumeControl_setVolume is None:
 		baseVolumeControl_setVolume = VolumeControl.setVolume
-	if enabled and maxVolume <> 100:
+	if enabled and maxVolume != 100:
 		VolumeControl.setVolume = AVA_setVolume
 		VolumeControl.maxVolume = maxVolume
 	else:

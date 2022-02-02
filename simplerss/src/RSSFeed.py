@@ -1,4 +1,4 @@
-from TagStrip import strip, strip_readable
+from .TagStrip import strip, strip_readable
 from Components.Scanner import ScanFile
 
 NS_RDF = "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}"
@@ -81,7 +81,7 @@ class RSSWrapper(ElementWrapper):
 		self.len = len(self)-1
 		return self
 
-	def next(self):
+	def __next__(self):
 		idx = self.idx
 		if idx > self.len:
 			raise StopIteration
@@ -214,7 +214,7 @@ class UniversalFeed(BaseFeed):
 			elif feed.tag.endswith("feed"):
 				self.wrapper = PEAWrapper
 			else:
-				raise NotImplementedError, 'Unsupported Feed: %s' % feed.tag
+				raise NotImplementedError('Unsupported Feed: %s' % feed.tag)
 
 			wrapper = self.wrapper(feed, self.ns)
 

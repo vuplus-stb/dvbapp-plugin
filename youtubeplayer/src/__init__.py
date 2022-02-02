@@ -22,7 +22,7 @@ def localeInit():
 def _(txt):
     t = gettext.dgettext("YouTubePlayer", txt)
     if t == txt:
-        print "[YTB] fallback to default translation for", txt
+        print("[YTB] fallback to default translation for", txt)
         t = gettext.gettext(txt)
     return t
 

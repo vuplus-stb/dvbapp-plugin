@@ -11,10 +11,10 @@ from Components.ActionMap import ActionMap
 from Components.config import config, ConfigSubsection, ConfigInteger, ConfigYesNo, ConfigText
 from Plugins.Plugin import PluginDescriptor
 
-from StreamPlayer import StreamPlayer
-from LastFMConfig import LastFMConfigScreen
-from LastFM import LastFM
-from urllib2 import quote as urllib2_qoute
+from .StreamPlayer import StreamPlayer
+from .LastFMConfig import LastFMConfigScreen
+from .LastFM import LastFM
+from urllib.parse import quote as urllib2_qoute
 from twisted.web.client import downloadPage
 from os import remove as os_remove, system as os_system
 from random import randrange
@@ -67,7 +67,7 @@ def startScrobbler(reason, **kwargs):
         else:
             streamplayer.setSession(kwargs["session"])
         
-        from scrobbler import EventListener
+        from .scrobbler import EventListener
         evl = EventListener(kwargs["session"],streamplayer)
         evl.startListenToEvents()
         
@@ -341,7 +341,7 @@ class LastFMScreenMain(Screen,HelpableScreen,LastFM):
                 self.resetScreensaverTimer()
 
     def onTextForCustomStationEntered(self,text):
-        print "onTextForCustomStationEntered",text,self.customstationtype
+        print(("onTextForCustomStationEntered",text,self.customstationtype))
         if text is not None:
             if self.customstationtype =="artist":
                 self.changeStation(urllib2_qoute("lastfm://artist/%s/similarartists"%text))

@@ -11,7 +11,7 @@ from Components.ConfigList import ConfigListScreen
 from Components.Pixmap import Pixmap
 from Components.ActionMap import ActionMap, NumberActionMap
 from enigma import ePoint
-from AutoMount import iAutoMount, AutoMount
+from .AutoMount import iAutoMount, AutoMount
 from re import sub as re_sub
 
 class AutoMountEdit(Screen, ConfigListScreen):
@@ -97,12 +97,12 @@ class AutoMountEdit(Screen, ConfigListScreen):
                 self.sharetypelist.append(("nfs", _("NFS share")))
                 self.sharetypelist.append(("cifs", _("CIFS share")))
 
-                if self.mountinfo.has_key('mounttype'):
+                if 'mounttype' in self.mountinfo:
                         mounttype = self.mountinfo['mounttype']
                 else:
                         mounttype = "nfs"
 
-                if self.mountinfo.has_key('active'):
+                if 'active' in self.mountinfo:
                         active = self.mountinfo['active']
                         if active == 'True':
                                 active = True
@@ -110,34 +110,34 @@ class AutoMountEdit(Screen, ConfigListScreen):
                                 active = False
                 else:
                         active = True
-                if self.mountinfo.has_key('ip'):
+                if 'ip' in self.mountinfo:
                         if self.mountinfo['ip'] is False:
                                 ip = [192, 168, 0, 0]
                         else:
                                 ip = self.convertIP(self.mountinfo['ip'])
                 else:
                         ip = [192, 168, 0, 0]
-                if self.mountinfo.has_key('sharename'):
+                if 'sharename' in self.mountinfo:
                         sharename = self.mountinfo['sharename']
                 else:
                         sharename = "Sharename"
-                if self.mountinfo.has_key('sharedir'):
+                if 'sharedir' in self.mountinfo:
                         sharedir = self.mountinfo['sharedir']
                 else:
                         sharedir = "/export/hdd"
-                if self.mountinfo.has_key('options'):
+                if 'options' in self.mountinfo:
                         options = self.mountinfo['options']
                 else:
                         options = "rw,nolock,tcp"
-                if self.mountinfo.has_key('username'):
+                if 'username' in self.mountinfo:
                         username = self.mountinfo['username']
                 else:
                         username = ""
-                if self.mountinfo.has_key('password'):
+                if 'password' in self.mountinfo:
                         password = self.mountinfo['password']
                 else:
                         password = ""
-                if self.mountinfo.has_key('hdd_replacement'):
+                if 'hdd_replacement' in self.mountinfo:
                         hdd_replacement = self.mountinfo['hdd_replacement']
                         if hdd_replacement == 'True':
                                 hdd_replacement = True
@@ -206,7 +206,7 @@ class AutoMountEdit(Screen, ConfigListScreen):
                         self.createSetup()
 
         def KeyText(self):
-                print "Green Pressed"
+                print("Green Pressed")
                 if self["config"].getCurrent() == self.sharenameEntry:
                         self.session.openWithCallback(lambda x : self.VirtualKeyBoardCallback(x, 'sharename'), VirtualKeyBoard, title = (_("Enter share name:")), text = self.sharenameConfigEntry.value)
                 if self["config"].getCurrent() == self.sharedirEntry:
@@ -263,7 +263,7 @@ class AutoMountEdit(Screen, ConfigListScreen):
                                 current[1].help_window.instance.hide()
                 sharename = self.sharenameConfigEntry.value
 
-                if self.mounts.has_key(sharename) is True:
+                if (sharename in self.mounts) is True:
                         self.session.openWithCallback(self.updateConfig, MessageBox, (_("A mount entry with this name already exists!\nUpdate existing entry and continue?\n") ) )
                 else:
                         self.session.openWithCallback(self.applyConfig, MessageBox, (_("Are you sure you want to save this network mount?\n\n") ) )

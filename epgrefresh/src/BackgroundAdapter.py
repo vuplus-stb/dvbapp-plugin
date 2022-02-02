@@ -28,7 +28,7 @@ class BackgroundAdapter:
 			self.session.pip.servicePath = newservice.getPath()
 
 	def play(self, service):
-		print "[EPGRefresh.BackgroundAdapter.play]"
+		print("[EPGRefresh.BackgroundAdapter.play]")
 		if not self.pipAvail: return False
 
 		if not self.session.pipshown: # make sure pip still exists

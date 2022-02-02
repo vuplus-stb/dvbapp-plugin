@@ -26,8 +26,8 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 from Tools.LoadPixmap import LoadPixmap
-from YouTubeUserConfig import youTubeUserConfig
-from YouTubeUserConfig import YouTubeUserConfigScreen
+from .YouTubeUserConfig import youTubeUserConfig
+from .YouTubeUserConfig import YouTubeUserConfigScreen
 from enigma import eListboxPythonMultiContent, RT_HALIGN_LEFT, gFont
 
 from . import _

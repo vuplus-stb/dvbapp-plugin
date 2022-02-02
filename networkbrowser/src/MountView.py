@@ -9,8 +9,8 @@ from Components.Network import iNetwork
 from Components.Sources.List import List
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE
-from AutoMount import iAutoMount, AutoMount
-from MountEdit import AutoMountEdit
+from .AutoMount import iAutoMount, AutoMount
+from .MountEdit import AutoMountEdit
 
 class AutoMountView(Screen):
         skin = """
@@ -70,7 +70,7 @@ class AutoMountView(Screen):
         def showMountsList(self):
                 self.list = []
                 self.mounts = iAutoMount.getMountsList()
-                for sharename in self.mounts.keys():
+                for sharename in list(self.mounts.keys()):
                         mountentry = iAutoMount.automounts[sharename]
                         self.list.append(self.buildMountViewItem(mountentry))
                 self["config"].setList(self.list)

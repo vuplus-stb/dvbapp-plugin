@@ -2,9 +2,9 @@
 # joergm6 IHAD
 import time
 import os
-from __init__ import _
+from .__init__ import _
 
-from globals import *
+from .globals import *
 
 from enigma import eTimer, eSize
 
@@ -17,7 +17,7 @@ from Components.Sources.Progress import Progress
 
 # Startup/shutdown notification
 from Tools import Notifications
-from Sensors import sensors
+from .Sensors import sensors
 from time import gmtime, strftime
 import datetime
 
@@ -61,7 +61,7 @@ def skal(x, x1, x2, y1, y2):
 	return y
 
 def FClog(wert):
-	print "[FanControl2]",wert
+	print(("[FanControl2]",wert))
 	while len(FC2Log) > config.plugins.FanControl.LogCount.value:
 		del FC2Log[5]
 	FC2Log.append(strftime("%H:%M:%S ") + wert)
@@ -457,7 +457,7 @@ class FanControl2SpezialSetup(Screen, ConfigListScreen):
 			sel = self["config"].getCurrent()[1]
 			if sel == config.plugins.FanControl.LogPath:
 				self.session.openWithCallback(self.dirSelected, LocationBox, text = _("Choose path"), filename = "", currDir = self["config"].getCurrent()[1].value, minFree = 50)
-		except Exception, e:
+		except Exception as e:
 			self.session.open(MessageBox, "Error:\n" + str(e), MessageBox.TYPE_ERROR)
 
 	def dirSelected(self, dir):
@@ -1029,7 +1029,7 @@ class FanControl2(Screen):
 def autostart(reason, **kwargs):
 	global session
 	from Plugins.Extensions.WebInterface.WebChilds.Toplevel import addExternalChild
-	from FC2webSite import FC2web, FC2webLog, FC2webChart
+	from .FC2webSite import FC2web, FC2webLog, FC2webChart
 	from twisted.web import static
 	root = static.File("/usr/lib/enigma2/python/Plugins/Extensions/FanControl2/data")
 #	root = FC2web()
@@ -1037,7 +1037,7 @@ def autostart(reason, **kwargs):
 	root.putChild("log", FC2webLog())
 	root.putChild("chart", FC2webChart())
 	addExternalChild( ("fancontrol", root) )
-	if reason == 0 and kwargs.has_key("session"):
+	if reason == 0 and "session" in kwargs:
 		session = kwargs["session"]
 		session.open(FanControl2)
           

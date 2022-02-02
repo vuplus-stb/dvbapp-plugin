@@ -27,9 +27,9 @@ from pyexpat import ExpatError
 import xml.dom.minidom
 
 ### my
-from WebcamViewConfig import WebcamViewerMenu
-from PictureScreen import PictureScreen
-from WebcamTravel import TravelWebcamviewer
+from .WebcamViewConfig import WebcamViewerMenu
+from .PictureScreen import PictureScreen
+from .WebcamTravel import TravelWebcamviewer
 ###
 myname = "Webcam/Picture Viewer"
 myversion = "1.1"
@@ -69,7 +69,7 @@ def startWebcamviewer(session, **kwargs):
 		try:
 			xmlnode = xml.dom.minidom.parse(open(xmlfile))
 			session.openWithCallback(mainCB, WebcamViewer, xmlnode.childNodes[1])
-		except ExpatError,e:
+		except ExpatError as e:
 			session.open(
 				MessageBox,
 				_("Loading config file failed!\n\n%s") % e,
@@ -174,10 +174,10 @@ class Slideshow:
 				self.wbviewer.do()
 			self.currentslideshowitem = currentslideshowitem
 		elif int(config.plugins.pictureviewer.slideshowmode.value) is SLIDESHOWMODE_REPEAT:
-			print "["+myname+"] restarting slideshow"
+			print("["+myname+"] restarting slideshow")
 			self.start()
 		else:
-			print "["+myname+"] slideshow finished"
+			print("["+myname+"] slideshow finished")
 			self.wbviewer.exit()
 			self.cb()
 
@@ -261,10 +261,10 @@ class PictureViewer(Screen):
 						_("select List to load"),
 						list
 				)
-			except IOError,e:
-				print "["+myname+"] IOError:",e
-			except OSError,e:
-				print "["+myname+"] OSError:",e
+			except IOError as e:
+				print("["+myname+"] IOError:",e)
+			except OSError as e:
+				print("["+myname+"] OSError:",e)
 
 	def KeyRed(self):
 		if self.currList is "filelist" :
@@ -299,21 +299,21 @@ class PictureViewer(Screen):
 					   if x.startswith("#"):
 						   pass
 					   elif not os.path.exists(file):
-						   print "["+myname+"] loaded file from filelist isnt avaible! ignoreing ->", file
+						   print("["+myname+"] loaded file from filelist isnt avaible! ignoreing ->", file)
 					   else:
 						   list.append((_(file.split("/")[-1]), file))
 				   self.slideshowfiles = list
 				   self["slist"].l.setList(self.slideshowfiles)
 				   self.loadedslideshowlistlistname = filename.replace(config.plugins.pictureviewer.slideshowext.value, "")
-			   except IOError, e:
-				   print "["+myname+"] error:", e
+			   except IOError as e:
+				   print("["+myname+"] error:", e)
 
 	def fileToSaveFilelistEntered(self, filename):
 		if filename is not None:
-			print "["+myname+"] saving list to ", config.plugins.pictureviewer.slideshowdir.value+filename + config.plugins.pictureviewer.slideshowext.value
+			print("["+myname+"] saving list to ", config.plugins.pictureviewer.slideshowdir.value+filename + config.plugins.pictureviewer.slideshowext.value)
 			try:
 				if not os.path.exists(config.plugins.pictureviewer.slideshowdir.value):
-					print "+" * 10, os.path.basename(filename)
+					print("+" * 10, os.path.basename(filename))
 					os.mkdir(config.plugins.pictureviewer.slideshowdir.value)
 				fp = open(config.plugins.pictureviewer.slideshowdir.value + filename+config.plugins.pictureviewer.slideshowext.value, "w")
 				fp.write("# this is a slideshow file for "+myname+" made by V"+myversion+"\n")
@@ -322,8 +322,8 @@ class PictureViewer(Screen):
 				for x in self.slideshowfiles:
 					fp.write(x[1] + "\n")
 				fp.close()
-			except IOError, e:
-				print "["+myname+"] error:", e
+			except IOError as e:
+				print("["+myname+"] error:", e)
 
 	def KeyYellow(self):
 		if self.currList is "filelist":
@@ -369,11 +369,11 @@ class PictureViewer(Screen):
 				if selection[1] == True: # isDir
 					pass
 				else:
-					print "["+myname+"] file selected ", selection[0]
+					print("["+myname+"] file selected ", selection[0])
 					if os.path.isfile(selection[0]):
 						self.session.open(PictureScreen,selection[0].split("/")[-1], selection[0])
 					else:
-						print "["+myname+"] file not found ", selection[0]
+						print("["+myname+"] file not found ", selection[0])
 		else:
 			self.updateInfoPanel()
 
@@ -425,7 +425,7 @@ class PictureViewer(Screen):
 			pass
 
 	def output(self,str):
-		print "+" * 10, str
+		print("+" * 10, str)
 
 	def openMenu(self):
 		self.session.open(WebcamViewerMenu)
@@ -580,7 +580,7 @@ class PictureList(MenuList):
 		else:
 			extension = name.split('.')
 			extension = extension[-1].lower()
-			if EXTENSIONS.has_key(extension):
+			if extension in EXTENSIONS:
 				png = loadPNG("/usr/share/enigma2/extensions/" + EXTENSIONS[extension] + ".png")
 			else:
 				png = None

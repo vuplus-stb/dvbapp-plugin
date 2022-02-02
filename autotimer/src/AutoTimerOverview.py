@@ -6,14 +6,14 @@ from Screens.Screen import Screen
 from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
-from AutoTimerEditor import AutoTimerEditor, AutoTimerChannelSelection
-from AutoTimerSettings import AutoTimerSettings
-from AutoTimerPreview import AutoTimerPreview
-from AutoTimerImporter import AutoTimerImportSelector
-from AutoTimerWizard import AutoTimerWizard
+from .AutoTimerEditor import AutoTimerEditor, AutoTimerChannelSelection
+from .AutoTimerSettings import AutoTimerSettings
+from .AutoTimerPreview import AutoTimerPreview
+from .AutoTimerImporter import AutoTimerImportSelector
+from .AutoTimerWizard import AutoTimerWizard
 
 # GUI (Components)
-from AutoTimerList import AutoTimerList
+from .AutoTimerList import AutoTimerList
 from Components.ActionMap import HelpableActionMap
 from Components.config import config
 from Components.Sources.StaticText import StaticText

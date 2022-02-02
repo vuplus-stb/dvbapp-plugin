@@ -25,15 +25,15 @@ class ServiceListReload(Source):
 			elif self.cmd is self.USERBOUQUETS:
 				self.res = self.reloadUserBouquets()
 				self.res = ( True, 'reloaded bouquets' )
-		except Exception, e:
+		except Exception as e:
 			pass
 
 	def reloadLameDB(self):
-		print "[ServiceListReload] reloading lamedb"
+		print("[ServiceListReload] reloading lamedb")
 		self.eDVBDB.reloadServicelist()
 
 	def reloadUserBouquets(self):
-		print "[ServiceListReload] reloading userbouquets"
+		print("[ServiceListReload] reloading userbouquets")
 		self.eDVBDB.reloadBouquets()
 
 	def getResult(self):

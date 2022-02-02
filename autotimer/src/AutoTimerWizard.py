@@ -4,7 +4,7 @@ from . import _
 # GUI (Screens)
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
-from AutoTimerEditor import AutoTimerEditorBase, AutoTimerServiceEditor, \
+from .AutoTimerEditor import AutoTimerEditorBase, AutoTimerServiceEditor, \
 		AutoTimerFilterEditor
 
 # GUI (Components)
@@ -151,7 +151,7 @@ class AutoTimerWizard(WizardLanguage, AutoTimerEditorBase, Rc):
 	def maybeRemoveWhitespaces(self):
 		# XXX: Hack alert
 		if self["list"].current[1] == "removeTrailingWhitespaces":
-			print "Next step would be to remove trailing whitespaces, removing them and redirecting to 'conf2'"
+			print("Next step would be to remove trailing whitespaces, removing them and redirecting to 'conf2'")
 			self.timer.match = self.timer.match.rstrip()
 			self.match.value = self.match.value.rstrip()
 			self.currStep = self.getStepWithID("conf2")

@@ -12,7 +12,7 @@ from Tools.BoundFunction import boundFunction
 
 from enigma import eListboxPythonMultiContent, RT_HALIGN_LEFT, RT_HALIGN_RIGHT,ePicLoad,eTimer
 
-from PictureScreen import PictureScreen
+from .PictureScreen import PictureScreen
 
 from twisted.web.client import getPage,downloadPage
 #from twisted.internet import reactor
@@ -23,7 +23,7 @@ from os import remove as os_remove
 from os.path import exists as os_path_exists
 from datetime import datetime
 
-from urllib import quote as urllib_quote
+from urllib.parse import quote as urllib_quote
 #########################################
 
 class TravelWebcamviewer(Screen):
@@ -114,7 +114,7 @@ class TravelWebcamviewer(Screen):
 	def onOK(self):
 		selection = self["list"].getCurrent()
 		if selection:
-			print selection
+			print(selection)
 			self.session.open(PictureScreen,selection[0].title,selection[0].pic_url)
 
 	def onRed(self):
@@ -143,7 +143,7 @@ class TravelWebcamviewer(Screen):
 			self.finish_loading = False
 
 	def onDataLoaded(self,list,count=0,page=0,per_page=0):
-		print "onDataLoaded",list,count,page,per_page
+		print("onDataLoaded",list,count,page,per_page)
 		self.count =count
 		self.page = page
 		self.per_page = per_page
@@ -160,12 +160,12 @@ class TravelWebcamviewer(Screen):
 			downloadPage(cam.thumbnail_url,"/tmp/"+str(cam.webcamid)+"_thumb.jpg").addCallback(self.fetchFinished,cam.webcamid).addErrback(self.fetchFailed,cam.webcamid)
 
 	def fetchFailed(self,string,webcamid):
-		print "fetchFailed",webcamid,string.getErrorMessage()
+		print("fetchFailed",webcamid,string.getErrorMessage())
 		self.buildEntryStatus(string.getErrorMessage())
 		self.pixmaps_to_load.remove(webcamid)
 
 	def fetchFinished(self,x,webcamid):
-		print "fetchFinished",x,webcamid
+		print("fetchFinished",x,webcamid)
 		self.pixmaps_to_load.remove(webcamid)
 
 		sc = AVSwitch().getFramebufferScale()
@@ -175,14 +175,14 @@ class TravelWebcamviewer(Screen):
 			self.picloads[webcamid].setPara((self["thumbnail"].instance.size().width(), self["thumbnail"].instance.size().height(), sc[0], sc[1], False, 1, "#00000000"))
 			self.picloads[webcamid].startDecode("/tmp/"+str(webcamid)+"_thumb.jpg")
 		else:
-			print "[decodePic] Thumbnail file NOT FOUND !!!-->:",thumbnailFile
+			print("[decodePic] Thumbnail file NOT FOUND !!!-->:",thumbnailFile)
 
 	def finish_decode(self,webcamid,info):
-		print "finish_decode - of webcamid", webcamid,info
+		print("finish_decode - of webcamid", webcamid,info)
 		ptr = self.picloads[webcamid].getData()
 		if ptr != None:
 			self.thumbnails[webcamid] = ptr
-			print "removing file"
+			print("removing file")
 			os_remove("/tmp/"+str(webcamid)+"_thumb.jpg")
 			del self.picloads[webcamid]
 			self.timer_default.start(1)
@@ -191,7 +191,7 @@ class TravelWebcamviewer(Screen):
 
 	def buildStatusList(self):
 		self.timer_status.stop()
-		print "buildStatusList"
+		print("buildStatusList")
 		statuslist = []
 		statuslist.append(self.buildEntryStatus("loading data"))
 
@@ -208,7 +208,7 @@ class TravelWebcamviewer(Screen):
 		if len(self.picloads) != 0:
 			return
 		self.timer_default.stop()
-		print "buildCamList"
+		print("buildCamList")
 		statuslist = []
 		for cam in self.list:
 			try:
@@ -280,9 +280,9 @@ class WebcamTravelerAPI:
 	def get(self,method,callback,errorback,**kwargs):
 		url = "http://"+self.URL_HOST+"/"+self.URL_FORMAT+"?method="+method+"&devid="+self.APIKEY
 		for key in kwargs:
-			print key,kwargs[key]
+			print(key,kwargs[key])
 			url +="&"+str(key)+"="+str(kwargs[key])
-		print url
+		print(url)
 		cb = getPage(url).addCallback(callback)
 		if errorback!=None:
 			cb.addErrback(errorback)
@@ -290,7 +290,7 @@ class WebcamTravelerAPI:
 			cb.addErrback(self.loadingFailed)
 
 	def loadingFailed(self,reason):
-		print "loadingFailed",reason
+		print("loadingFailed",reason)
 
 	def list_popular(self,callback,_page=1,_per_page=30):
 		"""	wct.webcams.list_popular

@@ -97,7 +97,7 @@ Information about re-configuring the RC is available at http://www.dream-multime
 		self.close()
 
 def write_mask(fname, value):
-	print "MultiRC:", fname, value
+	print(("MultiRC:", fname, value))
 	f = open(fname, "w")
 	f.write(value)
 	f.close()
@@ -123,8 +123,8 @@ def set_mask(mask=None):
 		if MASK2:
 			write_mask(MASK2, mask2)
 
-	except Exception, e:
-		print "MultiRC failed:", e
+	except Exception as e:
+		print(("MultiRC failed:", e))
 		return False
 	return True
 

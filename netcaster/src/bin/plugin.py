@@ -10,7 +10,7 @@ from enigma import eListboxPythonMultiContent, eListbox, gFont
 
 from Plugins.Plugin import PluginDescriptor
 from os import path as os_path, listdir as os_listdir
-from StreamPlayer import StreamPlayer
+from .StreamPlayer import StreamPlayer
 from Tools.Import import my_import
 
 ###############################################################################
@@ -98,13 +98,13 @@ class NETcasterScreenBrowser(Screen):
         global streamplayer
         try:
              streamplayer.metadatachangelisteners.remove(self.onMetadataChanged)
-        except Exception,e:
+        except Exception as e:
             pass
 
     def onMetadataChanged(self,title):
         try:
              self["metadata"].setText(title)
-        except Exception,e:
+        except Exception as e:
             self.disconnectFromMetadataUpdates()
 
     def getInterfaceList(self):
@@ -150,7 +150,7 @@ class NETcasterScreenBrowser(Screen):
     def stream_stop(self):
         global streamplayer
         if streamplayer.is_playing:
-            print "[",myname,"] stream_startstop -> stop"
+            print(("[",myname,"] stream_startstop -> stop"))
             streamplayer.stop()
             self.disconnectFromMetadataUpdates()
             self["pixred"].setText("")

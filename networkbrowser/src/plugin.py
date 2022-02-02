@@ -3,9 +3,9 @@
 #from __init__ import _
 
 from Plugins.Plugin import PluginDescriptor
-from NetworkBrowser import NetworkBrowser
+from .NetworkBrowser import NetworkBrowser
 from Components.Network import iNetwork
-from MountManager import AutoMountManager
+from .MountManager import AutoMountManager
 
 plugin_path = ""
 

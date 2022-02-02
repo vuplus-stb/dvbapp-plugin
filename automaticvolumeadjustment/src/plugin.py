@@ -21,9 +21,9 @@
 #  distributed other than under the conditions noted above.
 #
 from Plugins.Plugin import PluginDescriptor
-from AutomaticVolumeAdjustmentSetup import AutomaticVolumeAdjustmentConfigScreen
-from AutomaticVolumeAdjustment import AutomaticVolumeAdjustment
-from AutomaticVolumeAdjustmentConfig import saveVolumeDict
+from .AutomaticVolumeAdjustmentSetup import AutomaticVolumeAdjustmentConfigScreen
+from .AutomaticVolumeAdjustment import AutomaticVolumeAdjustment
+from .AutomaticVolumeAdjustmentConfig import saveVolumeDict
 
 def autostart(reason, **kwargs):
 	if "session" in kwargs:

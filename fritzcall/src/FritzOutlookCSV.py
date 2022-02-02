@@ -15,7 +15,7 @@ except ValueError:
 		return string
 	
 	def debug(text):
-		print text
+		print(text)
 	
 	import re
 	def normalizePhoneNumber(intNo):
@@ -36,7 +36,7 @@ except ValueError:
 			return '0'
 
 def out(number, name):
-	print number + '#' + name
+	print((number + '#' + name))
 
 import csv
 #
@@ -61,13 +61,13 @@ def findNumber(number, filename):
 	if not fileD:
 		return
 	addrs = csv.reader(fileD, delimiter=',', quotechar='"')
-	addrs.next() # skip header
+	next(addrs) # skip header
 	for row in addrs:
-		row = map(lambda w: w.decode('cp1252').encode('utf-8'), row)
-		name = u""
-		nameB = u""
-		address = u""
-		addressB = u""
+		row = [w.decode('cp1252').encode('utf-8') for w in row]
+		name = ""
+		nameB = ""
+		address = ""
+		addressB = ""
 		try: # this is just to catch wrong lines
 			if row[31] or (row[37] and number == normalizePhoneNumber(row[37])) or (row[40] and number == normalizePhoneNumber(row[40])): # Telefon geschäftlich
 				no = normalizePhoneNumber(row[31])
@@ -147,13 +147,13 @@ def readNumbers(filename, outFun):
 	if not fileD:
 		return
 	addrs = csv.reader(fileD, delimiter=',', quotechar='"')
-	addrs.next() # skip header
+	next(addrs) # skip header
 	for row in addrs:
-		row = map(lambda w: w.decode('cp1252'), row)
-		name = u""
-		nameB = u""
-		address = u""
-		addressB = u""
+		row = [w.decode('cp1252') for w in row]
+		name = ""
+		nameB = ""
+		address = ""
+		addressB = ""
 		try:
 			if row[31] or row[37] or row[40]:
 				if row[3]:

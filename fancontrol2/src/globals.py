@@ -1,4 +1,4 @@
-from __init__ import _
+from .__init__ import _
 Version = "V2.5"
 # globale Variablen        
 ZielRPM = 0

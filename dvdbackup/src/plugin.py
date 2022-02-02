@@ -71,8 +71,8 @@ def eject(dev):
 		ioctl_flag = int(0x5309)
 		ioctl(cd.fileno(), ioctl_flag)
 		cd.close()
-	except IOError, err:
-		print err
+	except IOError as err:
+		print(err)
 
 #################################################
 
@@ -144,13 +144,13 @@ class DVDBackup:
 				self.working = False
 		else:
 			message(_("Could not read the DVD informations!"))
-			print "[DVD Backup]",result
+			print(("[DVD Backup]",result))
 			self.working = False
 
 	def dvdbackupFinished(self, result, retval, extra_args):
 		if retval != 0:
 			message(_("Error while backup of DVD!"))
-			print "[DVD Backup]", retval, result
+			print(("[DVD Backup]", retval, result))
 			self.working = False
 		else:
 			if config.plugins.DVDBackup.create_iso.value:
@@ -179,7 +179,7 @@ class DVDBackup:
 	def mkisofsCallback(self, result, retval, extra_args):
 		if retval != 0:
 			message(_("Error while backup of DVD!"))
-			print "[DVD Backup]", result
+			print(("[DVD Backup]", result))
 			self.working = False
 		else:
 			self.mkisofs.progress = 100

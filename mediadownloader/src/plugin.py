@@ -22,13 +22,13 @@ def download_file(session, url, to = None, askOpen = False, callback = None, \
 	from Components.Scanner import ScanFile
 	file = ScanFile(url, autodetect = False)
 
-	from MediaDownloader import MediaDownloader
+	from .MediaDownloader import MediaDownloader
 	session.open(MediaDownloader, file, askOpen, to, callback)
 
 # Item chosen
 def filescan_chosen(session, item):
 	if item:
-		from MediaDownloader import MediaDownloader
+		from .MediaDownloader import MediaDownloader
 
 		session.open(MediaDownloader, item[1], askOpen = True)
 
@@ -59,7 +59,7 @@ def filescan_open(items, session, **kwargs):
 			choices
 		)
 	elif Len:
-		from MediaDownloader import MediaDownloader
+		from .MediaDownloader import MediaDownloader
 
 		session.open(MediaDownloader, items[0], askOpen = True)
 
