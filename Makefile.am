@@ -71,7 +71,6 @@ SUBDIRS = \
 	unwetterinfo \
 	valixdcontrol \
 	virtualzap \
-	vlcplayer \
 	weatherplugin \
 	webcamviewer \
 	webinterface \
